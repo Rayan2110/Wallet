@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.wallet.controller.InscriptionController">
+   <children>
+      <Label layoutY="50" layoutX="512" text="Inscription" />
+      <Button layoutY="718" layoutX="512" onAction="#onReturnButtonClick" mnemonicParsing="false" text="Return" />
+   </children>
+</AnchorPane>

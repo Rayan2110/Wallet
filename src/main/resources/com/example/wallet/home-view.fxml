@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="1024.0" prefWidth="768.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.wallet.controller.HomeController">
+   <children>
+      <ImageView fitHeight="312.0" fitWidth="272.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../../Image/LOGO3.jpeg" />
+         </image></ImageView>
+   </children>
+</AnchorPane>
