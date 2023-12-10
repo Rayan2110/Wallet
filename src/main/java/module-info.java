@@ -1,6 +1,8 @@
 module com.example.wallet {
     requires javafx.controls;
     requires javafx.fxml;
+    requires com.rometools.rome;
+    requires com.google.gson;
 
 
     opens com.example.wallet to javafx.fxml;
