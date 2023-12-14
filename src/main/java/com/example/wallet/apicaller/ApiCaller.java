@@ -3,7 +3,12 @@ package com.example.wallet.apicaller;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.List;
 
 public class ApiCaller {
@@ -33,9 +38,42 @@ public class ApiCaller {
     }
 
     private String makeApiCall(String apiUrl) {
-        // Code to make the API call and get the JSON response (use HttpURLConnection, OkHttp, etc.)
-        // Return the JSON response as a string
-        return ""; // Replace with actual implementation
+        try {
+            // Créer l'URL de l'API
+            URL url = new URL(apiUrl);
+
+            // Ouvrir la connexion HTTP
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            // Définir la méthode de requête (GET dans cet exemple)
+            connection.setRequestMethod("GET");
+
+            // Obtenir la réponse de l'API
+            int responseCode = connection.getResponseCode();
+
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                // Lire la réponse de l'API
+                BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                StringBuilder response = new StringBuilder();
+                String line;
+
+                while ((line = reader.readLine()) != null) {
+                    response.append(line);
+                }
+                reader.close();
+
+                // Retourner la réponse JSON
+                return response.toString();
+            } else {
+                // Gérer les erreurs de l'API
+                System.out.println("Erreur lors de la requête. Code de réponse : " + responseCode);
+                return null;
+            }
+        } catch (IOException e) {
+            // Gérer les exceptions d'entrée/sortie
+            e.printStackTrace();
+            return null;
+        }
     }
 
     // Define the data classes for deserialization
