@@ -15,8 +15,9 @@ public class ApiCaller {
         this.gson = new Gson();
     }
 
-    public List<CryptoCurrency> getTopCurrencies(int limit) {
-        String url = BASE_URL + "/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=" + limit + "&page=1&sparkline=false";
+    public List<CryptoCurrency> getAllCoinsMarket(String currency, int limit, String order, int page, boolean sparkline, String priceChangePercentage, String locale) {
+        String url = BASE_URL + "/coins/markets?vs_currency=" + currency + "&order=" + order + "&per_page=" + limit + "&page=" + page + "&sparkline=" + sparkline
+                + "&price_change_percentage=" + priceChangePercentage + "&locale=" + locale;
         String jsonResponse = makeApiCall(url);
         Type listType = new TypeToken<List<CryptoCurrency>>() {
         }.getType();
