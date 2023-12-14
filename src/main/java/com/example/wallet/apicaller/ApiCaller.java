@@ -1,5 +1,6 @@
 package com.example.wallet.apicaller;
 
+import com.example.wallet.entity.CryptoCurrency;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -74,11 +75,6 @@ public class ApiCaller {
             e.printStackTrace();
             return null;
         }
-    }
-
-    // Define the data classes for deserialization
-    private static class CryptoCurrency {
-        // Define fields based on the structure of the JSON response
     }
 
     private static class NewsArticle {
