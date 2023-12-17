@@ -20,7 +20,7 @@ public class ConnexionController {
     @FXML
     public TextField idField;
     @FXML
-    public Label errror_label;
+    public Label error_label;
 
 
     @FXML
@@ -33,21 +33,15 @@ public class ConnexionController {
 
     @FXML //liaison avec le FXML
     public void onConnexionButtonClick(ActionEvent actionEvent) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("home-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 1024, 768); // standard de base
-        stage.setScene(scene);
-        stage.show();
-        /*
-        if(passwordField.getText().equals("a") && idField.getText().equals("a")){
-            errror_label.setText("Connexion réussit!");
+        if(passwordField.getText().equals("Rayan2110@") && idField.getText().equals("Rayan2110")){
             FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("home-view.fxml"));
             Scene scene = new Scene(fxmlLoader.load(), 1024, 768); // standard de base
             stage.setScene(scene);
             stage.show();
-        } else {
-            errror_label.setText("Wrong login info");
+            error_label.setText("Connexion réussit!");
         }
-        */
+        else {
+            error_label.setText("Erreur! Veuillez Recommencez.");
+        }
     }
-
 }

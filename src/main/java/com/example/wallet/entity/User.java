@@ -5,6 +5,10 @@ import java.util.List;
 public class User {
     private long id;
 
+    private String mail;
+
+    private String password;
+
     private String name;
 
     private String firstName;
@@ -59,5 +63,21 @@ public class User {
 
     public void setWallets(List<Wallet> wallets) {
         this.wallets = wallets;
+    }
+
+    public String getMail() {
+        return mail;
+    }
+
+    public void setMail(String mail) {
+        this.mail = mail;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

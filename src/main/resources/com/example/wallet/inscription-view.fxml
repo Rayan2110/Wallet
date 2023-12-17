@@ -1,11 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
 <AnchorPane prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.wallet.controller.InscriptionController">
    <children>
-      <Label layoutY="50" layoutX="512" text="Inscription" />
-      <Button layoutY="718" layoutX="512" onAction="#onReturnButtonClick" mnemonicParsing="false" text="Return" />
+      <Label layoutX="639.0" layoutY="424.0" prefHeight="17.0" prefWidth="87.0" text="Nom">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font></Label>
+      <Label layoutX="500.0" layoutY="374.0" prefHeight="34.0" prefWidth="77.0" text="Inscription">
+         <font>
+            <Font size="14.0" />
+         </font></Label>
+      <Button layoutX="512" layoutY="718" mnemonicParsing="false" onAction="#onReturnButtonClick" text="Return" />
+      <ImageView fitHeight="332.0" fitWidth="322.0" layoutX="377.0">
+         <image>
+            <Image url="@../../../Image/logoSignUp.png" />
+         </image>
+      </ImageView>
+      <Label layoutX="639.0" layoutY="462.0" prefHeight="17.0" prefWidth="103.0" text="Prénom">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font></Label>
+      <Label layoutX="639.0" layoutY="503.0" prefHeight="20.0" prefWidth="126.0" text="Date de naissance">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font></Label>
+      <Label layoutX="639.0" layoutY="543.0" prefHeight="17.0" prefWidth="103.0" text="E-mail">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font></Label>
+      <Label layoutX="639.0" layoutY="582.0" prefHeight="17.0" prefWidth="103.0" text="Mot de passe">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font>
+      </Label>
+      <PasswordField layoutX="463.0" layoutY="578.0" />
+      <TextField layoutX="464.0" layoutY="420.0" />
+      <TextField layoutX="463.0" layoutY="458.0" />
+      <TextField layoutX="464.0" layoutY="499.0" />
+      <TextField layoutX="464.0" layoutY="539.0" />
+      <Button fx:id="sendButton" layoutX="513.0" layoutY="649.0" mnemonicParsing="false" onAction="#onInscriptionButtonClick" prefHeight="25.0" prefWidth="77.0" text="Send" />
+      <Label fx:id="descriptionLabel" layoutX="353.0" layoutY="620.0" prefHeight="20.0" prefWidth="423.0">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font>
+      </Label>
    </children>
 </AnchorPane>
