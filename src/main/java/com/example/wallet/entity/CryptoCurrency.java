@@ -1,7 +1,6 @@
 package com.example.wallet.entity;
 
 import com.google.gson.annotations.SerializedName;
-import java.util.List;
 
 public class CryptoCurrency {
     private String id;
@@ -302,18 +301,5 @@ public class CryptoCurrency {
         this.priceChangePercentage1hInCurrency = priceChangePercentage1hInCurrency;
     }
 
-// Constructeurs, getters, setters
-}
-
-class Sparkline {
-    private List<Double> price;
-
-    public List<Double> getPrice() {
-        return price;
-    }
-
-    public void setPrice(List<Double> price) {
-        this.price = price;
-    }
 // Constructeurs, getters, setters
 }

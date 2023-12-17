@@ -4,69 +4,74 @@
 <?import javafx.scene.control.cell.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="1024.0" prefWidth="768.0" xmlns="http://javafx.com/javafx/16"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.wallet.controller.HomeController">
+<AnchorPane prefHeight="1024.0" prefWidth="768.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.wallet.controller.HomeController">
     <VBox prefHeight="1024.0" prefWidth="789.0">
         <!-- Barre de recherche et section "Mon Compte" en haut à gauche -->
         <HBox>
-            <Label text="Barre de recherche"/>
+            <Label text="Barre de recherche" />
             <MenuButton text="User">
                 <items>
-                    <MenuItem text="Action 1"/>
-                    <MenuItem text="Action 2"/>
+                    <MenuItem text="Action 1" />
+                    <MenuItem text="Action 2" />
                 </items>
             </MenuButton>
-            <TextField fx:id="searchBar"/>
+            <TextField fx:id="searchBar" />
         </HBox>
 
         <!-- Contenu principal -->
         <HBox>
             <!-- Colonne NEWS à droite avec une largeur de 1/4 de la page -->
             <VBox prefWidth="192.0">
-                <Label text="NEWS"/>
+                <Label text="NEWS" />
                 <!-- Sous-blocs pour les News -->
                 <!-- ... Ajoute tes News ici ... -->
             </VBox>
 
             <!-- Espace vide entre la colonne NEWS et la TableView -->
-            <Region prefWidth="10.0"/>
+            <Region prefWidth="10.0" />
 
             <!-- Contenu central avec la TableView -->
             <!-- Contenu central avec la TableView dans un ScrollPane -->
-            <ScrollPane VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS">
+            <ScrollPane HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
                 <content>
                     <VBox>
-                        <Label text="Wallet"/>
-                        <Button text="Déclaration d'impots"/>
-                        <Button text="Epargne"/>
-                        <Button text="Cloner"/>
+                        <Label text="Wallet" />
+                        <Button text="Déclaration d'impots" />
+                        <Button text="Epargne" />
+                        <Button text="Cloner" />
 
                         <!-- TableView avec colonnes définies dans le fichier FXML -->
                         <TableView fx:id="tableView" prefHeight="400.0" prefWidth="1028.0" VBox.vgrow="ALWAYS">
                             <columns>
-                                <TableColumn fx:id="nameCol" prefWidth="115.0" text="Nom">
+                                <TableColumn fx:id="imageCol" prefWidth="76.0">
+                                    <cellFactory>
+                                        <PropertyValueFactory property="value"/>
+                                    </cellFactory>
+                                </TableColumn>
+                                <TableColumn fx:id="nameCol" prefWidth="76.0" text="Nom">
                                     <cellValueFactory>
-                                        <PropertyValueFactory property="name"/>
+                                        <PropertyValueFactory property="name" />
                                     </cellValueFactory>
                                 </TableColumn>
 
-                                <TableColumn fx:id="symbolCol" prefWidth="146.0" text="Symbole">
+                                <TableColumn fx:id="symbolCol" prefWidth="65.0" text="Symbole">
                                     <cellValueFactory>
-                                        <PropertyValueFactory property="symbol"/>
+                                        <PropertyValueFactory property="symbol" />
                                     </cellValueFactory>
                                 </TableColumn>
 
-                                <TableColumn fx:id="priceCol" prefWidth="174.0" text="Prix">
+                                <TableColumn fx:id="priceCol" prefWidth="106.0" text="Prix">
                                     <cellValueFactory>
-                                        <PropertyValueFactory property="currentPrice"/>
+                                        <PropertyValueFactory property="currentPrice" />
                                     </cellValueFactory>
                                 </TableColumn>
 
-                                <TableColumn fx:id="marketCapCol" prefWidth="164.0" text="Capitalisation boursière">
+                                <TableColumn fx:id="marketCapCol" prefWidth="165.0" text="Capitalisation boursière">
                                     <cellValueFactory>
-                                        <PropertyValueFactory property="marketCap"/>
+                                        <PropertyValueFactory property="marketCap" />
                                     </cellValueFactory>
                                 </TableColumn>
+
                             </columns>
                         </TableView>
                     </VBox>
@@ -76,16 +81,16 @@
 
         <!-- Section Transaction/historiques en bas -->
         <HBox>
-            <Label text="Transaction/historiques"/>
+            <Label text="Transaction/historiques" />
             <!-- ... Ajoute le contenu de Transaction/historiques ici ... -->
         </HBox>
 
         <!-- Bas de page -->
         <HBox>
-            <Label text="Your Financial Wallet !!"/>
+            <Label text="Your Financial Wallet !!" />
         </HBox>
     </VBox>
 
-    <ScrollBar layoutX="775.0" orientation="VERTICAL" prefHeight="1024.0" prefWidth="0.0"/>
+    <ScrollBar layoutX="775.0" orientation="VERTICAL" prefHeight="1024.0" prefWidth="0.0" />
 
 </AnchorPane>
