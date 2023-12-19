@@ -10,9 +10,14 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -40,7 +45,7 @@ public class HomeController implements Initializable {
     private TableColumn<CryptoCurrency, Long> marketCapCol;
 
     @FXML
-    private TableColumn<CryptoCurrency, Sparkline> last7d;
+    private TableColumn<CryptoCurrency, Sparkline> last7dCol;
 
 
     @Override
@@ -87,9 +92,41 @@ public class HomeController implements Initializable {
         symbolCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getSymbol()));
         priceCol.setCellValueFactory(data -> new SimpleDoubleProperty(data.getValue().getCurrentPrice()).asObject());
         marketCapCol.setCellValueFactory(data -> new SimpleLongProperty(data.getValue().getMarketCap()).asObject());
+        last7dCol.setCellValueFactory(new PropertyValueFactory<>("sparklineIn7d"));
+        // Custom cell factory to display the LineChart in the cell
 
+        last7dCol.setCellFactory(column -> new TableCell<>() {
+            @Override
+            protected void updateItem(Sparkline sparklineData, boolean empty) {
+                super.updateItem(sparklineData, empty);
+
+                if (empty || sparklineData == null) {
+                    setGraphic(null);
+                } else {
+                    LineChart<String, Number> lineChart = createLineChart(sparklineData.getPrice());
+                    setGraphic(lineChart);
+                }
+            }
+        });
         // Utilise setItems sur l'instance existante
         tableView.setItems(cryptoData);
+    }
+
+
+    private LineChart<String, Number> createLineChart(List<Double> sparklineData) {
+        CategoryAxis xAxis = new CategoryAxis();
+        NumberAxis yAxis = new NumberAxis();
+
+        LineChart<String, Number> lineChart = new LineChart<>(xAxis, yAxis);
+
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+        for (int i = 0; i < sparklineData.size(); i++) {
+            series.getData().add(new XYChart.Data<>(String.valueOf(i), sparklineData.get(i)));
+        }
+
+        lineChart.getData().add(series);
+
+        return lineChart;
     }
 
     // Méthode pour appeler l'API et récupérer les données

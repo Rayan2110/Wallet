@@ -3,7 +3,7 @@ module com.example.wallet {
     requires javafx.fxml;
     requires com.google.gson;
 
-    opens com.example.wallet.entity to com.google.gson;
+    opens com.example.wallet.entity; // Ajoutez cette ligne
     opens com.example.wallet to javafx.fxml;
     exports com.example.wallet;
     exports com.example.wallet.controller;
