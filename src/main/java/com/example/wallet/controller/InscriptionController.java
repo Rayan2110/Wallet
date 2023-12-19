@@ -6,8 +6,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.text.Text;
 
-import java.io.IOException;
+import java.io.*;
 
 import static com.example.wallet.HelloApplication.stage;
 
@@ -18,6 +20,25 @@ public class InscriptionController {
     public Label descriptionLabel;
 
     @FXML
+    public TextField nameField;
+
+    @FXML
+    public TextField firstNameField;
+
+    @FXML
+    public TextField birthdayField;
+
+    @FXML
+    public TextField mailField;
+
+    @FXML
+    public TextField passwordField;
+
+
+    public InscriptionController() throws IOException {
+    }
+
+    @FXML
     public void onReturnButtonClick(ActionEvent actionEvent) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 1024, 768); // standard de base
@@ -26,12 +47,14 @@ public class InscriptionController {
     }
 
     public void onInscriptionButtonClick(ActionEvent actionEvent) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("connexion-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 1024, 768); // standard de base
         descriptionLabel.setText("Inscription réussit !");
-        stage.setScene(scene);
-        stage.show();
+        GestionUtilisateur gestion = new GestionUtilisateur();
+
+        // Exemple d'inscription
+        gestion.inscrireUtilisateur(mailField.getText(),passwordField.getText(), nameField.getText(),firstNameField.getText(), birthdayField.getText());
     }
-
-
 }
+
+

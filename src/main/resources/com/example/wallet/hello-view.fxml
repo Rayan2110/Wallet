@@ -12,12 +12,12 @@
           </padding>
 
           <Label fx:id="welcomeText" />
-         <ImageView fitHeight="236.0" fitWidth="421.0">
-            <image>
-               <Image url="@../../../Image/logo2.jpg" />
-            </image>
-         </ImageView>
           <Button id="connexion" fx:id="connexion" onAction="#onConnexionButtonClick" text="Connexion" textAlignment="CENTER" />
          <Button fx:id="inscrption" mnemonicParsing="false" onAction="#onInscriptionButtonClick" text="Inscription" />
       </VBox>
+   <ImageView fitHeight="261.0" fitWidth="348.0" layoutX="363.0" layoutY="85.0">
+      <image>
+         <Image url="@../../../Image/logoAccueil.png" />
+      </image>
+   </ImageView>
 </AnchorPane>

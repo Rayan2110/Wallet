@@ -38,11 +38,11 @@
             <Font name="System Bold" size="14.0" />
          </font>
       </Label>
-      <PasswordField layoutX="463.0" layoutY="578.0" />
-      <TextField layoutX="464.0" layoutY="420.0" />
-      <TextField layoutX="463.0" layoutY="458.0" />
-      <TextField layoutX="464.0" layoutY="499.0" />
-      <TextField layoutX="464.0" layoutY="539.0" />
+      <PasswordField fx:id="passwordField" layoutX="463.0" layoutY="578.0" />
+      <TextField fx:id="nameField" layoutX="464.0" layoutY="420.0" />
+      <TextField fx:id="firstNameField" layoutX="463.0" layoutY="458.0" />
+      <TextField fx:id="birthdayField" layoutX="464.0" layoutY="499.0" />
+      <TextField fx:id="mailField" layoutX="464.0" layoutY="539.0" />
       <Button fx:id="sendButton" layoutX="513.0" layoutY="649.0" mnemonicParsing="false" onAction="#onInscriptionButtonClick" prefHeight="25.0" prefWidth="77.0" text="Send" />
       <Label fx:id="descriptionLabel" layoutX="353.0" layoutY="620.0" prefHeight="20.0" prefWidth="423.0">
          <font>
