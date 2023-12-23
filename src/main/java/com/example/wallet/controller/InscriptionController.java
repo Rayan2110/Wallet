@@ -7,12 +7,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.text.Text;
+
 
 import java.io.*;
+import java.util.regex.Pattern;
 
 import static com.example.wallet.HelloApplication.stage;
-
 
 
 public class InscriptionController {
@@ -35,9 +35,6 @@ public class InscriptionController {
     public TextField passwordField;
 
 
-    public InscriptionController() throws IOException {
-    }
-
     @FXML
     public void onReturnButtonClick(ActionEvent actionEvent) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
@@ -51,9 +48,23 @@ public class InscriptionController {
         Scene scene = new Scene(fxmlLoader.load(), 1024, 768); // standard de base
         descriptionLabel.setText("Inscription réussit !");
         GestionUtilisateur gestion = new GestionUtilisateur();
-
+        if(isValidEmail(mailField.getText())){
+            gestion.inscrireUtilisateur(mailField.getText(),passwordField.getText(), nameField.getText(),firstNameField.getText(), birthdayField.getText());
+        }
+        else {
+            descriptionLabel.setText("Veuillez recommencer ! Le format de votre adresse e-mail est incorrect.");
+        }
         // Exemple d'inscription
         gestion.inscrireUtilisateur(mailField.getText(),passwordField.getText(), nameField.getText(),firstNameField.getText(), birthdayField.getText());
+    }
+
+    public static boolean isValidEmail(String email) {
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+        Pattern pattern = Pattern.compile(emailRegex);
+        if (email == null) {
+            return false;
+        }
+        return pattern.matcher(email).matches();
     }
 }
 
