@@ -1,4 +1,3 @@
-Id /E-Mail/Mot De Passe/Nom/Prénom/Date De Naissance
-1/rayan.kallal54@yahoo.fr/Rayan2110@/Kallal/Rayan/20/08/2001
-2/raph/raph/raph/raph/20/08/2001
-dede@gmail.fr/dede/dede/dede/25-12-2020
+E-Mail/Mot De Passe/Nom/Prénom/Date De Naissance
+rk/rk/Kallal/Rayan/20/08/2001
+

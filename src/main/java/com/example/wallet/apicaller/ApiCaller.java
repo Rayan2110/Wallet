@@ -1,6 +1,7 @@
 package com.example.wallet.apicaller;
 
 import com.example.wallet.entity.CryptoCurrency;
+import com.example.wallet.entity.News;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -30,10 +31,10 @@ public class ApiCaller {
         return gson.fromJson(jsonResponse, listType);
     }
 
-    public List<NewsArticle> getLatestNews() {
+    public News getLatestNews() {
         String url = "https://min-api.cryptocompare.com/data/v2/news/?lang=EN"; // Replace with the actual URL for news
         String jsonResponse = makeApiCall(url);
-        Type listType = new TypeToken<List<NewsArticle>>() {
+        Type listType = new TypeToken<News>() {
         }.getType();
         return gson.fromJson(jsonResponse, listType);
     }

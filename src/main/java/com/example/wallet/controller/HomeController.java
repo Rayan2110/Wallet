@@ -2,6 +2,7 @@ package com.example.wallet.controller;
 
 import com.example.wallet.apicaller.ApiCaller;
 import com.example.wallet.entity.CryptoCurrency;
+import com.example.wallet.entity.News;
 import com.example.wallet.entity.Sparkline;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleLongProperty;
@@ -57,6 +58,7 @@ public class HomeController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
         List<CryptoCurrency> cryptoDataApi = fetchDataFromApi();
+        News cryptoNewsApi = fetchNewsFromApi();
         ObservableList<CryptoCurrency> cryptoData = FXCollections.observableArrayList();
         cryptoData.addAll(cryptoDataApi);
 
@@ -177,6 +179,11 @@ public class HomeController implements Initializable {
     private List<CryptoCurrency> fetchDataFromApi() {
         ApiCaller apiCaller = new ApiCaller();
         return apiCaller.getAllCoinsMarket("usd", 10, "market_cap_desc", 1, true, "7d", "en");
+    }
+
+    private News fetchNewsFromApi() {
+        ApiCaller apiCaller = new ApiCaller();
+        return apiCaller.getLatestNews();
     }
 
 }
