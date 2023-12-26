@@ -25,6 +25,13 @@ public class User {
         this.wallets = wallets;
     }
 
+    public User(String name, String firstName, int age, List<Wallet> wallets) {
+        this.name = name;
+        this.firstName = firstName;
+        this.age = age;
+        this.wallets = wallets;
+    }
+
     public long getId() {
         return id;
     }

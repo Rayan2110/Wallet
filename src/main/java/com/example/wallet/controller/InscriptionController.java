@@ -7,12 +7,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.text.Text;
 
-import java.io.*;
+import java.io.IOException;
 
 import static com.example.wallet.HelloApplication.stage;
-
 
 
 public class InscriptionController {
@@ -52,8 +50,7 @@ public class InscriptionController {
         descriptionLabel.setText("Inscription réussit !");
         GestionUtilisateur gestion = new GestionUtilisateur();
 
-        // Exemple d'inscription
-        gestion.inscrireUtilisateur(mailField.getText(),passwordField.getText(), nameField.getText(),firstNameField.getText(), birthdayField.getText());
+        gestion.inscrireUtilisateur(mailField.getText(), passwordField.getText(), nameField.getText(), firstNameField.getText(), birthdayField.getText());
     }
 }
 
