@@ -1,4 +1,4 @@
-package com.example.wallet.apicaller;
+package com.example.wallet;
 
 import com.example.wallet.entity.CryptoCurrency;
 import com.example.wallet.entity.News;
@@ -39,7 +39,7 @@ public class ApiCaller {
         return gson.fromJson(jsonResponse, listType);
     }
 
-    private String makeApiCall(String apiUrl) {
+    public String makeApiCall(String apiUrl) {
         try {
             // Créer l'URL de l'API
             URL url = new URL(apiUrl);
@@ -78,7 +78,4 @@ public class ApiCaller {
         }
     }
 
-    private static class NewsArticle {
-        // Define fields based on the structure of the JSON response from the news API
-    }
 }

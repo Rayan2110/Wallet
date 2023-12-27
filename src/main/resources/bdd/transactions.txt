@@ -1,0 +1,1 @@
+Id|IdUser|Action|Value|Date

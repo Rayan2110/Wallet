@@ -53,8 +53,6 @@ public class InscriptionController {
         else {
             descriptionLabel.setText("Veuillez recommencer ! Le format de votre adresse e-mail est incorrect.");
         }
-        // Exemple d'inscription
-        gestion.inscrireUtilisateur(mailField.getText(),passwordField.getText(), nameField.getText(),firstNameField.getText(), birthdayField.getText());
     }
 
     public static boolean isValidEmail(String email) {

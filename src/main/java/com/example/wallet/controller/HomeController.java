@@ -1,6 +1,6 @@
 package com.example.wallet.controller;
 
-import com.example.wallet.apicaller.ApiCaller;
+import com.example.wallet.ApiCaller;
 import com.example.wallet.entity.CryptoCurrency;
 import com.example.wallet.entity.News;
 import com.example.wallet.entity.Sparkline;

@@ -1,0 +1,2 @@
+Id|Mail|Password|Name|Username|BirthDate
+1|r.smadja@gmail.fr|raph|sm|raph|04/08/1995
