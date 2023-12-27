@@ -35,13 +35,13 @@ public class GestionUtilisateur {
             String line;
 
             while ((line = reader.readLine()) != null) {
-                String[] parts = line.split("/");
+                String[] parts = line.split("\\|");
                 if (parts.length < 2) {
                     continue; // Données incomplètes, passe à la ligne suivante
                 }
 
-                String emailEnregistre = parts[0];
-                String motDePasseEnregistre = parts[1];
+                String emailEnregistre = parts[1];
+                String motDePasseEnregistre = parts[2];
 
                 if (emailEnregistre.equals(email) && motDePasseEnregistre.equals(motDePasse)) {
                     return true; // Identifiants corrects
