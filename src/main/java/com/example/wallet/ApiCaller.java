@@ -1,6 +1,7 @@
 package com.example.wallet;
 
 import com.example.wallet.entity.CryptoCurrency;
+import com.example.wallet.entity.Articles;
 import com.example.wallet.entity.News;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;

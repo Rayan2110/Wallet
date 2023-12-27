@@ -2,6 +2,7 @@ package com.example.wallet.controller;
 
 import com.example.wallet.ApiCaller;
 import com.example.wallet.entity.CryptoCurrency;
+import com.example.wallet.entity.Articles;
 import com.example.wallet.entity.News;
 import com.example.wallet.entity.Sparkline;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -21,6 +22,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.util.Pair;
 
 import java.io.IOException;
@@ -54,11 +56,18 @@ public class HomeController implements Initializable {
     @FXML
     private Button addMoney;
 
+    @FXML
+    private VBox newsVBox;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
+
         List<CryptoCurrency> cryptoDataApi = fetchDataFromApi();
-        News cryptoNewsApi = fetchNewsFromApi();
+        News cryptoArticlesApi = fetchNewsFromApi();
+        displayNews(cryptoArticlesApi);
+
+
         ObservableList<CryptoCurrency> cryptoData = FXCollections.observableArrayList();
         cryptoData.addAll(cryptoDataApi);
 
@@ -185,5 +194,13 @@ public class HomeController implements Initializable {
         ApiCaller apiCaller = new ApiCaller();
         return apiCaller.getLatestNews();
     }
+    private void displayNews(News cryptoArticlesApi) {
+        newsVBox.getChildren().clear(); // Nettoyer les anciennes nouvelles
 
+        for (Articles article : cryptoArticlesApi.getData()) {
+            Label newsLabel = new Label(article.getTitle());
+            // Ajoutez plus de détails ou de mise en forme ici si nécessaire
+            newsVBox.getChildren().add(newsLabel);
+        }
+    }
 }
