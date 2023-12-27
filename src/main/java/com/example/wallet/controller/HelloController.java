@@ -14,7 +14,7 @@ public class HelloController {
     @FXML
     protected void onConnexionButtonClick() throws IOException {
         //FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("connexion-view.fxml"));
-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("connexion-view.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("home-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 1024, 768); // standard de base
         stage.setScene(scene);
         stage.show();

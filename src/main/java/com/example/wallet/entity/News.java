@@ -1,88 +1,36 @@
 package com.example.wallet.entity;
 
-import com.google.gson.annotations.SerializedName;
+import java.util.List;
 
 public class News {
 
-    private String id;
+    String Type;
 
-    private String guid;
+    String Message;
 
-    @SerializedName("published_on")
-    private String publishedOn;
+    List<Articles> Data;
 
-    private String imageurl;
-
-    private String title;
-
-    private String url;
-
-    private String body;
-
-    private String lang;
-
-
-    public String getId() {
-        return id;
+    public String getType() {
+        return Type;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setType(String type) {
+        Type = type;
     }
 
-    public String getGuid() {
-        return guid;
+    public String getMessage() {
+        return Message;
     }
 
-    public void setGuid(String guid) {
-        this.guid = guid;
+    public void setMessage(String message) {
+        Message = message;
     }
 
-    public String getPublishedOn() {
-        return publishedOn;
+    public List<Articles> getData() {
+        return Data;
     }
 
-    public void setPublishedOn(String publishedOn) {
-        this.publishedOn = publishedOn;
-    }
-
-    public String getImageurl() {
-        return imageurl;
-    }
-
-    public void setImageurl(String imageurl) {
-        this.imageurl = imageurl;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public String getBody() {
-        return body;
-    }
-
-    public void setBody(String body) {
-        this.body = body;
-    }
-
-    public String getLang() {
-        return lang;
-    }
-
-    public void setLang(String lang) {
-        this.lang = lang;
+    public void setData(List<Articles> data) {
+        Data = data;
     }
 }
