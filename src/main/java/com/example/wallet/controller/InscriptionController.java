@@ -46,7 +46,7 @@ public class InscriptionController {
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("connexion-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 1024, 768); // standard de base
         descriptionLabel.setText("Inscription réussit !");
-        GestionUtilisateur gestion = new GestionUtilisateur();
+        GestionUser gestion = new GestionUser();
         if(isValidEmail(mailField.getText())){
             gestion.inscrireUtilisateur(mailField.getText(),passwordField.getText(), nameField.getText(),firstNameField.getText(), birthdayField.getText());
         }

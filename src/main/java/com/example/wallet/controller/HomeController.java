@@ -52,13 +52,13 @@ public class HomeController implements Initializable {
     private TableColumn<CryptoCurrency, Sparkline> last7dCol;
 
     @FXML
-    private Button addMoney;
+    private Button addWallet;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
         List<CryptoCurrency> cryptoDataApi = fetchDataFromApi();
-        News cryptoNewsApi = fetchNewsFromApi();
+        List<News> cryptoNewsApi = fetchNewsFromApi();
         ObservableList<CryptoCurrency> cryptoData = FXCollections.observableArrayList();
         cryptoData.addAll(cryptoDataApi);
 
@@ -181,7 +181,7 @@ public class HomeController implements Initializable {
         return apiCaller.getAllCoinsMarket("usd", 10, "market_cap_desc", 1, true, "7d", "en");
     }
 
-    private News fetchNewsFromApi() {
+    private List<News> fetchNewsFromApi() {
         ApiCaller apiCaller = new ApiCaller();
         return apiCaller.getLatestNews();
     }

@@ -1,6 +1,6 @@
 package com.example.wallet.entity;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class Wallet {
@@ -17,7 +17,7 @@ public class Wallet {
 
     private List<Transaction> transactions;
 
-    private Date creationDate;
+    private LocalDateTime creationDate;
 
     private History history;
 
@@ -71,11 +71,11 @@ public class Wallet {
         this.transactions = transactions;
     }
 
-    public Date getCreationDate() {
+    public LocalDateTime getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(Date creationDate) {
+    public void setCreationDate(LocalDateTime creationDate) {
         this.creationDate = creationDate;
     }
 
@@ -95,15 +95,13 @@ public class Wallet {
         this.currency = currency;
     }
 
-    public Wallet(long id, String name, String title, String description, float money, List<Transaction> transactions, Date creationDate, History history, String currency) {
+    public Wallet(long id, String name, String title, String description, float money, LocalDateTime creationDate, String currency) {
         this.id = id;
         this.name = name;
         this.title = title;
         this.description = description;
         this.money = money;
-        this.transactions = transactions;
         this.creationDate = creationDate;
-        this.history = history;
         this.currency = currency;
     }
 }

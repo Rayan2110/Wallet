@@ -1,12 +1,17 @@
 package com.example.wallet.controller;
 
+import com.example.wallet.entity.User;
+import com.example.wallet.entity.Wallet;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
 
-public class GestionUtilisateur {
+public class GestionUser {
     String cheminFichier = "src/main/resources/bdd/users.txt"; // Remplacez par le chemin de votre fichier
+    User currentUser;
 
     public void inscrireUtilisateur(String email, String motDePasse, String name, String firstName, String birthday) {
         try (FileWriter writer = new FileWriter(cheminFichier, true)) {
@@ -33,7 +38,7 @@ public class GestionUtilisateur {
     public boolean verifierIdentifiants(String email, String motDePasse) {
         try (BufferedReader reader = new BufferedReader(new FileReader(cheminFichier))) {
             String line;
-
+            reader.readLine();
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split("\\|");
                 if (parts.length < 2) {
@@ -44,6 +49,14 @@ public class GestionUtilisateur {
                 String motDePasseEnregistre = parts[2];
 
                 if (emailEnregistre.equals(email) && motDePasseEnregistre.equals(motDePasse)) {
+
+                    currentUser = new User(Long.parseLong(parts[0]), parts[1], parts[2], parts[3], parts[4], parts[5]);
+                    GestionWallet gestionWallet = new GestionWallet();
+                    List<Wallet> wallets = gestionWallet.checkMyWallets(Long.parseLong(parts[0]));
+                    if (wallets != null && wallets.size() > 0) {
+                        System.out.println("tu as plusieurs wallets");
+                    }
+
                     return true; // Identifiants corrects
                 }
             }

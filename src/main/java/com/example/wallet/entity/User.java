@@ -13,19 +13,20 @@ public class User {
 
     private String firstName;
 
-    private int age;
+    private String age;
 
     private List<Wallet> wallets;
 
-    public User(long id, String name, String firstName, int age, List<Wallet> wallets) {
+    public User(long id, String mail, String password, String name, String firstName, String age) {
         this.id = id;
+        this.mail = mail;
+        this.password = password;
         this.name = name;
         this.firstName = firstName;
         this.age = age;
-        this.wallets = wallets;
     }
 
-    public User(String name, String firstName, int age, List<Wallet> wallets) {
+    public User(String name, String firstName, String age, List<Wallet> wallets) {
         this.name = name;
         this.firstName = firstName;
         this.age = age;
@@ -56,11 +57,11 @@ public class User {
         this.firstName = firstName;
     }
 
-    public int getAge() {
+    public String getAge() {
         return age;
     }
 
-    public void setAge(int age) {
+    public void setAge(String age) {
         this.age = age;
     }
 

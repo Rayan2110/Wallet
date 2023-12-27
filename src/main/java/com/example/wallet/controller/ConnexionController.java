@@ -36,7 +36,7 @@ public class ConnexionController {
 
 
         // Exemple de tentative de connexion
-        GestionUtilisateur gestion = new GestionUtilisateur();
+        GestionUser gestion = new GestionUser();
         boolean connexionReussie = gestion.verifierIdentifiants(idField.getText(), passwordField.getText());
         if (connexionReussie) {
             System.out.println("Connexion réussie !");
