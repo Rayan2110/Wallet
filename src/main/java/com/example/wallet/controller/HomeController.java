@@ -252,6 +252,43 @@ public class HomeController implements Initializable {
     private void displayNews(News cryptoArticlesApi) {
         ObservableList<Articles> articlesList = FXCollections.observableArrayList(cryptoArticlesApi.getData());
         newsListView.setItems(articlesList);
+        // Ajout de l'écouteur de clics
+        newsListView.setOnMouseClicked(event -> {
+            Articles article = (Articles) newsListView.getSelectionModel().getSelectedItem();
+            if (article != null && event.getClickCount() == 1) {
+                showArticlePopup(article);
+            }
+        });
         newsListView.refresh(); // Rafraîchir la ListView après avoir défini les éléments
+    }
+    private void showArticlePopup(Articles article) {
+        // Création du dialog
+        Dialog<Void> dialog = new Dialog<>();
+        dialog.setTitle(article.getTitle());
+
+        // Création du GridPane et mise en place des détails de l'article
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        ImageView imageView = new ImageView();
+        if (article.getImageurl() != null && !article.getImageurl().isEmpty()) {
+            Image image = new Image(article.getImageurl(), true); // true to load in background
+            imageView.setImage(image);
+            imageView.setPreserveRatio(true);
+            imageView.setFitHeight(200); // Adjust as necessary
+        }
+
+        Text contentText = new Text(article.getBody());
+        contentText.setWrappingWidth(300); // Adjust as necessary
+
+        grid.add(imageView, 0, 0);
+        grid.add(contentText, 0, 1);
+
+        dialog.getDialogPane().setContent(grid);
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+
+        dialog.showAndWait();
     }
 }
