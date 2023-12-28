@@ -72,18 +72,13 @@
             </columns>
         </TableView>
     </center>
-
     <right>
-        <VBox fx:id="newsVBox" prefHeight="999.0" prefWidth="200.0" spacing="10" style="-fx-background-color: red;">
-            <Text text="News" VBox.vgrow="NEVER" />
-            <ScrollPane VBox.vgrow="ALWAYS">
-                <VBox>
-                    <!-- News items here -->
-                    <Label text="News Item 1" />
-                    <Label text="News Item 2" />
-                    <!-- Add more news items as needed -->
-                </VBox>
-            </ScrollPane>
+        <VBox fx:id="newsVBox" prefHeight="714.0" prefWidth="280.0" spacing="10" style="-fx-background-color: #EEEEEE;">
+            <!-- Changed color for a lighter one -->
+            <Text style="-fx-font-weight: bold; -fx-font-size: 16px;" text="News" VBox.vgrow="NEVER" />
+            <ListView fx:id="newsListView" VBox.vgrow="ALWAYS">
+                <!-- The news items will be added here programmatically -->
+            </ListView>
         </VBox>
     </right>
     <bottom>
