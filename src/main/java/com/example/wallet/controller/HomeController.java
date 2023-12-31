@@ -20,7 +20,9 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -56,9 +58,15 @@ public class HomeController implements Initializable {
     private Button addWallet;
 
     @FXML
+    private Text newsHeaderText;
+
+    @FXML
     private VBox newsVBox;
 
     private User currentUser;
+
+    @FXML
+    private ListView newsListView;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -127,6 +135,43 @@ public class HomeController implements Initializable {
         });
         // Utilise setItems sur l'instance existante
         tableView.setItems(cryptoData);
+
+        newsListView.setCellFactory(param -> new ListCell<Articles>() {
+            private ImageView imageView = new ImageView();
+            private VBox vbox = new VBox();
+            private Label titleLabel = new Label();
+            private Label contentLabel = new Label();
+            private HBox hBox = new HBox(10); // 10px spacing between elements
+
+            {
+                vbox.getChildren().addAll(titleLabel, contentLabel);
+                hBox.getChildren().addAll(imageView, vbox);
+                hBox.setPadding(new Insets(10, 5, 10, 5)); // Padding around the HBox
+                contentLabel.setWrapText(true);
+            }
+
+            @Override
+            protected void updateItem(Articles item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (empty || item == null) {
+                    setGraphic(null);
+                } else {
+                    titleLabel.setText(item.getTitle());
+                    contentLabel.setText(item.getBody());
+
+                    // Assuming NewsItem has a getImageUrl method that returns a String
+                    if (item.getImageurl() != null && !item.getImageurl().isEmpty()) {
+                        Image image = new Image(item.getImageurl(), true); // true to load in background
+                        imageView.setImage(image);
+                        imageView.setPreserveRatio(true);
+                        imageView.setFitHeight(50); // or the size you want
+                    }
+
+                    setGraphic(hBox);
+                }
+            }
+        });
     }
 
     @FXML
@@ -207,13 +252,56 @@ public class HomeController implements Initializable {
         ApiCaller apiCaller = new ApiCaller();
         return apiCaller.getLatestNews();
     }
-    private void displayNews(News cryptoArticlesApi) {
-        newsVBox.getChildren().clear(); // Nettoyer les anciennes nouvelles
+    //private void displayNews(News cryptoArticlesApi) {
+        //newsVBox.getChildren().clear(); // Nettoyer les anciennes nouvelles
 
-        for (Articles article : cryptoArticlesApi.getData()) {
-            Label newsLabel = new Label(article.getTitle());
+    //for (Articles article : cryptoArticlesApi.getData()) {
+          //  Label newsLabel = new Label(article.getTitle());
             // Ajoutez plus de détails ou de mise en forme ici si nécessaire
-            newsVBox.getChildren().add(newsLabel);
+        //    newsVBox.getChildren().add(newsLabel);
+      //  }
+    //}
+
+    private void displayNews(News cryptoArticlesApi) {
+        ObservableList<Articles> articlesList = FXCollections.observableArrayList(cryptoArticlesApi.getData());
+        newsListView.setItems(articlesList);
+        // Ajout de l'écouteur de clics
+        newsListView.setOnMouseClicked(event -> {
+            Articles article = (Articles) newsListView.getSelectionModel().getSelectedItem();
+            if (article != null && event.getClickCount() == 1) {
+                showArticlePopup(article);
+            }
+        });
+        newsListView.refresh(); // Rafraîchir la ListView après avoir défini les éléments
+    }
+    private void showArticlePopup(Articles article) {
+        // Création du dialog
+        Dialog<Void> dialog = new Dialog<>();
+        dialog.setTitle(article.getTitle());
+
+        // Création du GridPane et mise en place des détails de l'article
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        ImageView imageView = new ImageView();
+        if (article.getImageurl() != null && !article.getImageurl().isEmpty()) {
+            Image image = new Image(article.getImageurl(), true); // true to load in background
+            imageView.setImage(image);
+            imageView.setPreserveRatio(true);
+            imageView.setFitHeight(200); // Adjust as necessary
         }
+
+        Text contentText = new Text(article.getBody());
+        contentText.setWrappingWidth(300); // Adjust as necessary
+
+        grid.add(imageView, 0, 0);
+        grid.add(contentText, 0, 1);
+
+        dialog.getDialogPane().setContent(grid);
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+
+        dialog.showAndWait();
     }
 }
