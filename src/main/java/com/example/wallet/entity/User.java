@@ -1,5 +1,6 @@
 package com.example.wallet.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class User {
@@ -15,7 +16,7 @@ public class User {
 
     private String age;
 
-    private List<Wallet> wallets;
+    private List<Wallet> wallets = new ArrayList<>();
 
     public User(long id, String mail, String password, String name, String firstName, String age) {
         this.id = id;

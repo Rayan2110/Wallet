@@ -34,6 +34,13 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class HomeController implements Initializable {
+
+    @FXML
+    private Label titleWallet;
+
+    @FXML
+    private Label moneyWallet;
+
     @FXML
     private TableView<CryptoCurrency> tableView; // Assure-toi que tu as bien défini TableView dans ton fichier FXML
 
@@ -55,24 +62,26 @@ public class HomeController implements Initializable {
     @FXML
     private TableColumn<CryptoCurrency, Sparkline> last7dCol;
 
-    @FXML
-    private Button addWallet;
-
-    @FXML
-    private Text newsHeaderText;
-
-    @FXML
-    private VBox newsVBox;
-
     private User currentUser;
 
     @FXML
     private ListView newsListView;
 
+    @FXML
+    private Menu walletsItems;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        GestionUser gestionUser = new GestionUser();
-        currentUser = gestionUser.getCurrentUser();
+        currentUser = GestionUser.getInstance().getCurrentUser();
+        // Get All Wallets
+        if (currentUser.getWallets().size() > 0) {
+            for (Wallet wallet : currentUser.getWallets()) {
+                MenuItem menuItem = new MenuItem();
+                menuItem.setText(wallet.getTitle());
+                walletsItems.getItems().add(menuItem);
+            }
+        }
+
         List<CryptoCurrency> cryptoDataApi = fetchDataFromApi();
         News cryptoArticlesApi = fetchNewsFromApi();
         displayNews(cryptoArticlesApi);
@@ -202,7 +211,7 @@ public class HomeController implements Initializable {
         currencyComboBox.setValue("EUR"); // Valeur par défaut
 
         Button submitButton = new Button("Soumettre");
-        submitButton.setOnAction(e -> handleSubmitButton(textFieldWalletTitle.getText(), textFieldWalletDescription.getText(), numberField.getText(), currencyComboBox.getValue()));
+        submitButton.setOnAction(e -> handleSubmitButton(textFieldWalletTitle.getText(), textFieldWalletDescription.getText(), numberField.getText(), currencyComboBox.getValue(), popupWindow));
 
         VBox layout = new VBox(10);
         layout.setPadding(new Insets(20));
@@ -215,7 +224,7 @@ public class HomeController implements Initializable {
     }
 
 
-    private void handleSubmitButton(String title, String description, String amount, String currency) {
+    private void handleSubmitButton(String title, String description, String amount, String currency, Stage popupStage) {
         // Traitez ici les données saisies
         System.out.println("Title : " + title + ", Description : " + description);
         System.out.println("Montant : " + amount + ", Devise : " + currency);
@@ -223,7 +232,14 @@ public class HomeController implements Initializable {
         GestionWallet gestionWallet = new GestionWallet();
 
         gestionWallet.newWallet(wallet, currentUser.getId());
-        // Vous pouvez ajouter ici d'autres logiques, comme la mise à jour d'une base de données, l'affichage de messages, etc.
+        currentUser.getWallets().add(wallet);
+        popupStage.close();
+
+        // Afficher un message de succès
+        Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
+        successAlert.setTitle("Succès");
+        successAlert.setHeaderText("Opération réussie avec le montant : " + amount + " " + currency);
+        successAlert.showAndWait();
     }
 
 
@@ -253,15 +269,6 @@ public class HomeController implements Initializable {
         ApiCaller apiCaller = new ApiCaller();
         return apiCaller.getLatestNews();
     }
-    //private void displayNews(News cryptoArticlesApi) {
-    //newsVBox.getChildren().clear(); // Nettoyer les anciennes nouvelles
-
-    //for (Articles article : cryptoArticlesApi.getData()) {
-    //  Label newsLabel = new Label(article.getTitle());
-    // Ajoutez plus de détails ou de mise en forme ici si nécessaire
-    //    newsVBox.getChildren().add(newsLabel);
-    //  }
-    //}
 
     private void displayNews(News cryptoArticlesApi) {
         ObservableList<Articles> articlesList = FXCollections.observableArrayList(cryptoArticlesApi.getData());

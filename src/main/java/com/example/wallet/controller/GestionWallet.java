@@ -1,6 +1,5 @@
 package com.example.wallet.controller;
 
-import com.example.wallet.entity.User;
 import com.example.wallet.entity.Wallet;
 
 import java.io.BufferedReader;
@@ -51,7 +50,7 @@ public class GestionWallet {
                 long idUserRegister = Long.parseLong(parts[6]);
 
                 if (idUserRegister == idUser) {
-                    Wallet wallet = new Wallet(Long.parseLong(parts[0]),parts[1],parts[2],Float.parseFloat(parts[3]),LocalDateTime.parse(parts[4]),parts[5]);
+                    Wallet wallet = new Wallet(Long.parseLong(parts[0]), parts[1], parts[2], Float.parseFloat(parts[3]), LocalDateTime.parse(parts[4]), parts[5]);
                     wallets.add(wallet);
                 }
             }

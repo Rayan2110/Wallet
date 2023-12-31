@@ -22,6 +22,8 @@ public class ConnexionController {
     @FXML
     public Label error_label;
 
+    public GestionUser gestion;
+
 
     @FXML
     public void onReturnButtonClick(ActionEvent actionEvent) throws IOException {
@@ -35,8 +37,8 @@ public class ConnexionController {
     public void onConnexionButtonClick(ActionEvent actionEvent) throws IOException {
 
 
+        gestion = new GestionUser();
         // Exemple de tentative de connexion
-        GestionUser gestion = new GestionUser();
         boolean connexionReussie = gestion.verifierIdentifiants(idField.getText(), passwordField.getText());
         if (connexionReussie) {
             System.out.println("Connexion réussie !");

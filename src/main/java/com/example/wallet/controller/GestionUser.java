@@ -12,7 +12,14 @@ import java.util.List;
 public class GestionUser {
     private static GestionUser instance;
     private String cheminFichier = "src/main/resources/bdd/users.txt"; // Remplacez par le chemin de votre fichier
-    private User currentUser = new User();
+    private User currentUser;
+
+    public static GestionUser getInstance() {
+        if (instance == null) {
+            instance = new GestionUser();
+        }
+        return instance;
+    }
 
     public void inscrireUtilisateur(String email, String motDePasse, String name, String firstName, String birthday) {
         try (FileWriter writer = new FileWriter(cheminFichier, true)) {
@@ -51,7 +58,7 @@ public class GestionUser {
 
                 if (emailEnregistre.equals(email) && motDePasseEnregistre.equals(motDePasse)) {
                     User user = new User(Long.parseLong(parts[0]), parts[1], parts[2], parts[3], parts[4], parts[5]);
-                    setCurrentUser(user);
+                    GestionUser.getInstance().setCurrentUser(user);
                     GestionWallet gestionWallet = new GestionWallet();
                     List<Wallet> wallets = gestionWallet.checkMyWallets(Long.parseLong(parts[0]));
                     if (wallets != null && wallets.size() > 0) {
