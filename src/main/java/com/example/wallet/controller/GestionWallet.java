@@ -12,10 +12,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GestionWallet {
-    String cheminFichier = "src/main/resources/bdd/wallets.txt"; // Remplacez par le chemin de votre fichier
-    Wallet currentWallet;
+    private String cheminFichier = "src/main/resources/bdd/wallets.txt"; // Remplacez par le chemin de votre fichier
+    private Wallet currentWallet;
 
-    public void newWallet(Wallet wallet, int idUser) {
+    public void newWallet(Wallet wallet, long idUser) {
         try (FileWriter writer = new FileWriter(cheminFichier, true)) {
             int id = nbWallet();
             writer.write(id + "|" + wallet.getTitle() + "|" + wallet.getDescription() + "|" + wallet.getMoney() + "|" + LocalDateTime.now() + "|" + wallet.getCurrency() + "|" + idUser + "\n");
@@ -51,7 +51,7 @@ public class GestionWallet {
                 long idUserRegister = Long.parseLong(parts[6]);
 
                 if (idUserRegister == idUser) {
-                    Wallet wallet = new Wallet(Long.parseLong(parts[0]),parts[1],parts[2],parts[3],Float.parseFloat(parts[4]),LocalDateTime.parse(parts[5]),parts[6]);
+                    Wallet wallet = new Wallet(Long.parseLong(parts[0]),parts[1],parts[2],Float.parseFloat(parts[3]),LocalDateTime.parse(parts[4]),parts[5]);
                     wallets.add(wallet);
                 }
             }

@@ -1,10 +1,7 @@
 package com.example.wallet.controller;
 
 import com.example.wallet.ApiCaller;
-import com.example.wallet.entity.CryptoCurrency;
-import com.example.wallet.entity.Articles;
-import com.example.wallet.entity.News;
-import com.example.wallet.entity.Sparkline;
+import com.example.wallet.entity.*;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -13,6 +10,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.scene.Scene;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
@@ -21,14 +19,15 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.GridPane;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
-import javafx.util.Pair;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class HomeController implements Initializable {
@@ -59,9 +58,12 @@ public class HomeController implements Initializable {
     @FXML
     private VBox newsVBox;
 
+    private User currentUser;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
+        GestionUser gestionUser = new GestionUser();
+        currentUser = gestionUser.getCurrentUser();
         List<CryptoCurrency> cryptoDataApi = fetchDataFromApi();
         News cryptoArticlesApi = fetchNewsFromApi();
         displayNews(cryptoArticlesApi);
@@ -129,43 +131,55 @@ public class HomeController implements Initializable {
 
     @FXML
     protected void onAddMoneyButtonClick() throws IOException {
-        // Création du dialog
-        Dialog<Pair<String, String>> dialog = new Dialog<>();
-        dialog.setTitle("Ajouter de l'argent");
+        Stage popupWindow = new Stage();
+        popupWindow.initModality(Modality.APPLICATION_MODAL);
+        popupWindow.setTitle("Formulaire");
 
-        // Boutons
-        ButtonType validerButtonType = new ButtonType("Valider");
-        dialog.getDialogPane().getButtonTypes().addAll(validerButtonType, ButtonType.CANCEL);
+        // Création des éléments du formulaire
+        Label labelWalletTitle = new Label("Entrez le nom de votre porte-monnaie");
+        TextField textFieldWalletTitle = new TextField();
 
-        // Création du GridPane et mise en place des champs de formulaire
-        GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(20, 150, 10, 10));
+        Label labelWalletDescription = new Label("Entrez une description");
+        TextField textFieldWalletDescription = new TextField();
 
-        TextField amountField = new TextField();
-        amountField.setPromptText("Prix");
-
-        grid.add(amountField, 0, 0);
-
-        dialog.getDialogPane().setContent(grid);
-
-        // Convertit le résultat en pair <amountField, buttonType> quand le bouton valider est cliqué.
-        dialog.setResultConverter(dialogButton -> {
-            if (dialogButton == validerButtonType) {
-                return new Pair<>(amountField.getText(), "Valider");
+        Label labelWalletMoney = new Label("Montant à ajouter");
+        TextField numberField = new TextField();
+        numberField.addEventFilter(KeyEvent.KEY_TYPED, event -> {
+            if (!event.getCharacter().matches("[0-9]")) {
+                event.consume();
             }
-            return null;
         });
 
-        // Affichage du dialog et attente de l'action de l'utilisateur
-        Optional<Pair<String, String>> result = dialog.showAndWait();
+        // ComboBox pour la devise
+        ComboBox<String> currencyComboBox = new ComboBox<>();
+        currencyComboBox.getItems().addAll("EUR", "USD");
+        currencyComboBox.setValue("EUR"); // Valeur par défaut
 
-        result.ifPresent(amountButtonPair -> {
-            System.out.println("Montant ajouté: " + amountButtonPair.getKey());
-            // Ici, vous pouvez appeler votre logique pour traiter le montant
-        });
+        Button submitButton = new Button("Soumettre");
+        submitButton.setOnAction(e -> handleSubmitButton(textFieldWalletTitle.getText(), textFieldWalletDescription.getText(), numberField.getText(), currencyComboBox.getValue()));
+
+        VBox layout = new VBox(10);
+        layout.setPadding(new Insets(20));
+        layout.getChildren().addAll(labelWalletTitle, textFieldWalletTitle, labelWalletDescription, textFieldWalletDescription, labelWalletMoney, numberField, currencyComboBox, submitButton);
+
+        // Paramétrage de la scène et affichage
+        Scene scene = new Scene(layout, 1024, 768);
+        popupWindow.setScene(scene);
+        popupWindow.showAndWait();
     }
+
+
+    private void handleSubmitButton(String title, String description, String amount, String currency) {
+        // Traitez ici les données saisies
+        System.out.println("Title : " + title + ", Description : " + description);
+        System.out.println("Montant : " + amount + ", Devise : " + currency);
+        Wallet wallet = new Wallet(title, description, Float.parseFloat(amount), LocalDateTime.now(), currency);
+        GestionWallet gestionWallet = new GestionWallet();
+
+        gestionWallet.newWallet(wallet, currentUser.getId());
+        // Vous pouvez ajouter ici d'autres logiques, comme la mise à jour d'une base de données, l'affichage de messages, etc.
+    }
+
 
     private LineChart<String, Number> createLineChart(List<Double> sparklineData) {
         CategoryAxis xAxis = new CategoryAxis();

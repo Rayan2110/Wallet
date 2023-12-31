@@ -10,8 +10,9 @@ import java.io.IOException;
 import java.util.List;
 
 public class GestionUser {
-    String cheminFichier = "src/main/resources/bdd/users.txt"; // Remplacez par le chemin de votre fichier
-    User currentUser;
+    private static GestionUser instance;
+    private String cheminFichier = "src/main/resources/bdd/users.txt"; // Remplacez par le chemin de votre fichier
+    private User currentUser = new User();
 
     public void inscrireUtilisateur(String email, String motDePasse, String name, String firstName, String birthday) {
         try (FileWriter writer = new FileWriter(cheminFichier, true)) {
@@ -49,8 +50,8 @@ public class GestionUser {
                 String motDePasseEnregistre = parts[2];
 
                 if (emailEnregistre.equals(email) && motDePasseEnregistre.equals(motDePasse)) {
-
-                    currentUser = new User(Long.parseLong(parts[0]), parts[1], parts[2], parts[3], parts[4], parts[5]);
+                    User user = new User(Long.parseLong(parts[0]), parts[1], parts[2], parts[3], parts[4], parts[5]);
+                    setCurrentUser(user);
                     GestionWallet gestionWallet = new GestionWallet();
                     List<Wallet> wallets = gestionWallet.checkMyWallets(Long.parseLong(parts[0]));
                     if (wallets != null && wallets.size() > 0) {
@@ -64,5 +65,13 @@ public class GestionUser {
             e.printStackTrace();
         }
         return false; // Identifiants incorrects
+    }
+
+    public User getCurrentUser() {
+        return currentUser;
+    }
+
+    public void setCurrentUser(User currentUser) {
+        this.currentUser = currentUser;
     }
 }

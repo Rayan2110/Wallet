@@ -7,8 +7,6 @@ public class Wallet {
 
     private long id;
 
-    private String name;
-
     private String title;
 
     private String description;
@@ -29,14 +27,6 @@ public class Wallet {
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getTitle() {
@@ -95,9 +85,16 @@ public class Wallet {
         this.currency = currency;
     }
 
-    public Wallet(long id, String name, String title, String description, float money, LocalDateTime creationDate, String currency) {
+    public Wallet(long id, String title, String description, float money, LocalDateTime creationDate, String currency) {
         this.id = id;
-        this.name = name;
+        this.title = title;
+        this.description = description;
+        this.money = money;
+        this.creationDate = creationDate;
+        this.currency = currency;
+    }
+
+    public Wallet(String title, String description, float money, LocalDateTime creationDate, String currency) {
         this.title = title;
         this.description = description;
         this.money = money;

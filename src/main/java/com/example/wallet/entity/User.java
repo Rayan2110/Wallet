@@ -33,6 +33,10 @@ public class User {
         this.wallets = wallets;
     }
 
+    public User() {
+
+    }
+
     public long getId() {
         return id;
     }
