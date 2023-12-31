@@ -20,6 +20,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -253,13 +254,13 @@ public class HomeController implements Initializable {
         return apiCaller.getLatestNews();
     }
     //private void displayNews(News cryptoArticlesApi) {
-        //newsVBox.getChildren().clear(); // Nettoyer les anciennes nouvelles
+    //newsVBox.getChildren().clear(); // Nettoyer les anciennes nouvelles
 
     //for (Articles article : cryptoArticlesApi.getData()) {
-          //  Label newsLabel = new Label(article.getTitle());
-            // Ajoutez plus de détails ou de mise en forme ici si nécessaire
-        //    newsVBox.getChildren().add(newsLabel);
-      //  }
+    //  Label newsLabel = new Label(article.getTitle());
+    // Ajoutez plus de détails ou de mise en forme ici si nécessaire
+    //    newsVBox.getChildren().add(newsLabel);
+    //  }
     //}
 
     private void displayNews(News cryptoArticlesApi) {
@@ -274,6 +275,7 @@ public class HomeController implements Initializable {
         });
         newsListView.refresh(); // Rafraîchir la ListView après avoir défini les éléments
     }
+
     private void showArticlePopup(Articles article) {
         // Création du dialog
         Dialog<Void> dialog = new Dialog<>();
