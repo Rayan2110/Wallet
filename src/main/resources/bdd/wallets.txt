@@ -1,1 +1,2 @@
 Id|Title|Description|Money|DateOfCreation|Currency|IdUser
+1|Wallet 1|Description 1|100.0|2023-12-31T11:07:58.966389900|USD|1
