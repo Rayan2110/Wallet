@@ -1,6 +1,2 @@
 Id|Mail|Password|Name|Username|BirthDate
-1|r.smadja@gmail.fr|raph|sm|raph|04/08/1995
-2|rk9@gmail.com|a|r|k|e
-3|rayan.kallal54@yahoo.fr|Adel0101@|kallal|rayan|20/08/2001
-4|rayan.kallal54@yahoo.fr|Adel0101@|kallal|rayan|20/08/2001
-5|toto@toto.fr|toto|toto|titiPrenom|01/01/1996
+1|r.s@gmail.fr|raph|Smadja|Raphael|04/08/1995

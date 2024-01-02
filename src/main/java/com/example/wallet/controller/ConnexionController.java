@@ -23,6 +23,7 @@ public class ConnexionController {
     public Label error_label;
 
     public GestionUser gestion;
+    public GestionTransaction gestionTransaction;
 
 
     @FXML
@@ -35,12 +36,12 @@ public class ConnexionController {
 
     @FXML //liaison avec le FXML
     public void onConnexionButtonClick(ActionEvent actionEvent) throws IOException {
-        // Exemple de tentative de connexion
-        //GestionUser gestion = new GestionUser();
         gestion = new GestionUser();
         boolean connexionReussie = gestion.verifierIdentifiants(idField.getText(), passwordField.getText());
         if (connexionReussie) {
             System.out.println("Connexion réussie !");
+            gestionTransaction = new GestionTransaction();
+            gestionTransaction.getAllTransactions(GestionUser.getInstance().getCurrentUser());
             FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("home-view.fxml"));
             Scene scene = new Scene(fxmlLoader.load(), 1024, 768); // standard de base
             stage.setScene(scene);

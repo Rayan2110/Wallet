@@ -58,13 +58,13 @@ public class GestionUser {
 
                 if (emailEnregistre.equals(email) && motDePasseEnregistre.equals(motDePasse)) {
                     User user = new User(Long.parseLong(parts[0]), parts[1], parts[2], parts[3], parts[4], parts[5]);
-                    GestionUser.getInstance().setCurrentUser(user);
                     GestionWallet gestionWallet = new GestionWallet();
                     List<Wallet> wallets = gestionWallet.checkMyWallets(Long.parseLong(parts[0]));
                     if (wallets != null && wallets.size() > 0) {
                         System.out.println("tu as plusieurs wallets");
+                        user.setWallets(wallets);
                     }
-
+                    GestionUser.getInstance().setCurrentUser(user);
                     return true; // Identifiants corrects
                 }
             }

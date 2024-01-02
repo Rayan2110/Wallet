@@ -1,24 +1,38 @@
 package com.example.wallet.entity;
 
+import com.example.wallet.controller.TransactionType;
+
+import java.time.LocalDateTime;
 import java.util.Date;
 public class Transaction {
 
     private long id;
 
-    private String type; //Achat ou vente
+    private String transactionType; //Achat ou vente
 
     private float price; // prix en euros, dollars
 
-    private Date date;
+    private LocalDateTime date;
 
     private float amount; // prix en terme d'unité ( crypto, action, etc )
 
-    public Transaction(long id, String type, float price, Date date, float amount) {
+    private String token;
+
+    public Transaction(long id, String transactionType, float price, LocalDateTime date, float amount, String token) {
         this.id = id;
-        this.type = type;
+        this.transactionType = transactionType;
         this.price = price;
         this.date = date;
         this.amount = amount;
+        this.token = token;
+    }
+
+    public Transaction(String transactionType, float price, LocalDateTime date, float amount, String token) {
+        this.transactionType = transactionType;
+        this.price = price;
+        this.date = date;
+        this.amount = amount;
+        this.token = token;
     }
 
     public long getId() {
@@ -29,12 +43,12 @@ public class Transaction {
         this.id = id;
     }
 
-    public String getType() {
-        return type;
+    public String getTransactionType() {
+        return transactionType;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setTransactionType(String transactionType) {
+        this.transactionType = transactionType;
     }
 
     public float getPrice() {
@@ -45,11 +59,11 @@ public class Transaction {
         this.price = price;
     }
 
-    public Date getDate() {
+    public LocalDateTime getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
 
@@ -59,5 +73,13 @@ public class Transaction {
 
     public void setAmount(float amount) {
         this.amount = amount;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

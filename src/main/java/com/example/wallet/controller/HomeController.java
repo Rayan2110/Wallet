@@ -7,6 +7,7 @@ import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -70,16 +71,23 @@ public class HomeController implements Initializable {
     @FXML
     private Menu walletsItems;
 
+    private Wallet currentWallet;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         currentUser = GestionUser.getInstance().getCurrentUser();
         // Get All Wallets
-        if (currentUser.getWallets().size() > 0) {
+        if (currentUser != null && currentUser.getWallets() != null && currentUser.getWallets().size() > 0) {
+            System.out.println("Nombre de wallets : " + currentUser.getWallets().size());
             for (Wallet wallet : currentUser.getWallets()) {
                 MenuItem menuItem = new MenuItem();
+                menuItem.setId(String.valueOf(wallet.getId()));
                 menuItem.setText(wallet.getTitle());
+                menuItem.setOnAction(e -> switchWallet(e.getTarget().toString()));
                 walletsItems.getItems().add(menuItem);
             }
+            titleWallet.setText(currentUser.getWallets().get(0).getTitle());
+            moneyWallet.setText(currentUser.getWallets().get(0).getMoney() + " " + currentUser.getWallets().get(0).getCurrency());
         }
 
         List<CryptoCurrency> cryptoDataApi = fetchDataFromApi();
@@ -184,6 +192,10 @@ public class HomeController implements Initializable {
         });
     }
 
+    private void switchWallet(String wallet) {
+        System.out.println(wallet);
+    }
+
     @FXML
     protected void onAddMoneyButtonClick() throws IOException {
         Stage popupWindow = new Stage();
@@ -230,9 +242,15 @@ public class HomeController implements Initializable {
         System.out.println("Montant : " + amount + ", Devise : " + currency);
         Wallet wallet = new Wallet(title, description, Float.parseFloat(amount), LocalDateTime.now(), currency);
         GestionWallet gestionWallet = new GestionWallet();
-
+        Transaction transaction = new Transaction(TransactionType.CREATE_WALLET.name(), Float.parseFloat(amount), LocalDateTime.now(), 0, null);
+        GestionTransaction gestionTransaction = new GestionTransaction();
         gestionWallet.newWallet(wallet, currentUser.getId());
+        gestionTransaction.writeTransaction(transaction, wallet.getId(), currentUser.getId());
+        wallet.getTransactions().add(transaction);
         currentUser.getWallets().add(wallet);
+        MenuItem menuItem = new MenuItem(title);
+        menuItem.setOnAction(e->switchWallet(e.getTarget().toString()));
+        walletsItems.getItems().add(menuItem);
         popupStage.close();
 
         // Afficher un message de succès
