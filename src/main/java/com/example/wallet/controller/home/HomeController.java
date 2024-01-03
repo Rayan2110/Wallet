@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class HomeController implements Initializable {
@@ -218,6 +219,46 @@ public class HomeController implements Initializable {
         // Utilise setItems sur l'instance existante
         tableView.setItems(cryptoData);
     }
+    @FXML
+
+    private void onHandleEpargneButton() {
+        showEpargneDialog();
+    }
+
+    private void showEpargneDialog() {
+        // Créer un nouveau dialogue
+        Dialog<String> dialog = new Dialog<>();
+        dialog.setTitle("Épargne");
+        dialog.setHeaderText("Entrez le montant à épargner");
+
+        // Ajouter un bouton de type OK et Cancel
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        // Créer un champ de texte pour l'entrée
+        TextField inputField = new TextField();
+        inputField.setPromptText("Montant");
+
+        // Ajouter le champ de texte au dialogue
+        dialog.getDialogPane().setContent(inputField);
+
+        // Convertir le résultat en une chaîne lors de l'appui sur OK
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == ButtonType.OK) {
+                return inputField.getText();
+            }
+            return null;
+        });
+
+        // Afficher le dialogue et attendre la réponse de l'utilisateur
+        Optional<String> result = dialog.showAndWait();
+
+        // Traiter la réponse
+        result.ifPresent(montant -> {
+            System.out.println("Montant épargné: " + montant);
+            // Ajoutez ici le code pour gérer l'épargne
+        });
+    }
+
 
     private void buyCryptoCurrency(CryptoCurrency crypto) {
         System.out.println(crypto);
