@@ -9,5 +9,7 @@ module com.example.wallet {
     exports com.example.wallet;
     exports com.example.wallet.controller;
     opens com.example.wallet.controller to javafx.fxml;
+    exports com.example.wallet.controller.home;
+    opens com.example.wallet.controller.home to javafx.fxml;
 
 }

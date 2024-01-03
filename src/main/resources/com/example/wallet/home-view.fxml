@@ -8,14 +8,14 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 <BorderPane prefHeight="1024.0" prefWidth="768.0" xmlns="http://javafx.com/javafx/16"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.wallet.controller.HomeController">
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.wallet.controller.home.HomeController">
 
     <top>
         <VBox alignment="CENTER" spacing="5">
             <MenuBar>
                 <menus>
                     <Menu mnemonicParsing="false" text="Accueil"/>
-                    <Menu mnemonicParsing="false" text="Vos Wallets" fx:id="walletsItems">
+                    <Menu fx:id="walletsItems" mnemonicParsing="false" text="Vos Wallets">
                         <items>
 
                         </items>
@@ -50,6 +50,12 @@
                     <PieChart prefHeight="150" prefWidth="768.0">
                         <!-- PieChart data -->
                     </PieChart>
+                    <Label fx:id="descriptionWallet" contentDisplay="CENTER" layoutX="382.0" layoutY="63.0" text="."
+                           textAlignment="CENTER" textFill="#00223c">
+                        <font>
+                            <Font name="Arial" size="15.0"/>
+                        </font>
+                    </Label>
                 </children>
             </VBox>
             <HBox alignment="CENTER" prefHeight="66.0" prefWidth="766.0" spacing="5">
@@ -99,7 +105,7 @@
                         <PropertyValueFactory property="sparklineIn7d"/>
                     </cellValueFactory>
                 </TableColumn>
-
+                <TableColumn fx:id="actionCol" prefWidth="100.0" text="Action"/>
             </columns>
         </TableView>
     </center>

@@ -1,13 +1,16 @@
-package com.example.wallet.controller;
+package com.example.wallet.controller.home;
 
 import com.example.wallet.ApiCaller;
+import com.example.wallet.controller.GestionTransaction;
+import com.example.wallet.controller.GestionUser;
+import com.example.wallet.controller.GestionWallet;
+import com.example.wallet.controller.TransactionType;
 import com.example.wallet.entity.*;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -21,10 +24,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -41,6 +41,9 @@ public class HomeController implements Initializable {
 
     @FXML
     private Label moneyWallet;
+
+    @FXML
+    private Label descriptionWallet;
 
     @FXML
     private TableView<CryptoCurrency> tableView; // Assure-toi que tu as bien défini TableView dans ton fichier FXML
@@ -63,10 +66,15 @@ public class HomeController implements Initializable {
     @FXML
     private TableColumn<CryptoCurrency, Sparkline> last7dCol;
 
+    @FXML
+    private TableColumn<CryptoCurrency, Void> actionCol;
+
     private User currentUser;
 
     @FXML
     private ListView newsListView;
+
+    private NewsDisplay newsDisplay;
 
     @FXML
     private Menu walletsItems;
@@ -75,6 +83,11 @@ public class HomeController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        newsDisplay = new NewsDisplay();
+
+        News cryptoArticlesApi = fetchNewsFromApi(); // Votre méthode pour récupérer les articles
+        newsDisplay.setupNewsListView(newsListView, cryptoArticlesApi.getData());
+
         currentUser = GestionUser.getInstance().getCurrentUser();
         // Get All Wallets
         if (currentUser != null && currentUser.getWallets() != null && currentUser.getWallets().size() > 0) {
@@ -83,17 +96,17 @@ public class HomeController implements Initializable {
                 MenuItem menuItem = new MenuItem();
                 menuItem.setId(String.valueOf(wallet.getId()));
                 menuItem.setText(wallet.getTitle());
-                menuItem.setOnAction(e -> switchWallet(e.getTarget().toString()));
+                menuItem.setOnAction(e -> {
+                    switchWallet(wallet);
+                });
                 walletsItems.getItems().add(menuItem);
             }
             titleWallet.setText(currentUser.getWallets().get(0).getTitle());
             moneyWallet.setText(currentUser.getWallets().get(0).getMoney() + " " + currentUser.getWallets().get(0).getCurrency());
+            descriptionWallet.setText(currentUser.getWallets().get(0).getDescription());
         }
 
         List<CryptoCurrency> cryptoDataApi = fetchDataFromApi();
-        News cryptoArticlesApi = fetchNewsFromApi();
-        displayNews(cryptoArticlesApi);
-
 
         ObservableList<CryptoCurrency> cryptoData = FXCollections.observableArrayList();
         cryptoData.addAll(cryptoDataApi);
@@ -136,6 +149,27 @@ public class HomeController implements Initializable {
         priceCol.setCellValueFactory(data -> new SimpleDoubleProperty(data.getValue().getCurrentPrice()).asObject());
         marketCapCol.setCellValueFactory(data -> new SimpleLongProperty(data.getValue().getMarketCap()).asObject());
         last7dCol.setCellValueFactory(new PropertyValueFactory<>("sparklineIn7d"));
+        actionCol.setCellFactory(col -> {
+            Button buyButton = new Button("Acheter");
+            TableCell<CryptoCurrency, Void> cell = new TableCell<>() {
+                @Override
+                protected void updateItem(Void item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty) {
+                        setGraphic(null);
+                    } else {
+                        setGraphic(buyButton);
+                        buyButton.setOnAction(event -> {
+                            CryptoCurrency crypto = getTableView().getItems().get(getIndex());
+                            // Mettez ici la logique pour traiter l'achat
+                            buyCryptoCurrency(crypto);
+                        });
+                    }
+                }
+            };
+            return cell;
+        });
+
         // Custom cell factory to display the LineChart in the cell
 
         last7dCol.setCellFactory(column -> new TableCell<>() {
@@ -153,47 +187,16 @@ public class HomeController implements Initializable {
         });
         // Utilise setItems sur l'instance existante
         tableView.setItems(cryptoData);
-
-        newsListView.setCellFactory(param -> new ListCell<Articles>() {
-            private ImageView imageView = new ImageView();
-            private VBox vbox = new VBox();
-            private Label titleLabel = new Label();
-            private Label contentLabel = new Label();
-            private HBox hBox = new HBox(10); // 10px spacing between elements
-
-            {
-                vbox.getChildren().addAll(titleLabel, contentLabel);
-                hBox.getChildren().addAll(imageView, vbox);
-                hBox.setPadding(new Insets(10, 5, 10, 5)); // Padding around the HBox
-                contentLabel.setWrapText(true);
-            }
-
-            @Override
-            protected void updateItem(Articles item, boolean empty) {
-                super.updateItem(item, empty);
-
-                if (empty || item == null) {
-                    setGraphic(null);
-                } else {
-                    titleLabel.setText(item.getTitle());
-                    contentLabel.setText(item.getBody());
-
-                    // Assuming NewsItem has a getImageUrl method that returns a String
-                    if (item.getImageurl() != null && !item.getImageurl().isEmpty()) {
-                        Image image = new Image(item.getImageurl(), true); // true to load in background
-                        imageView.setImage(image);
-                        imageView.setPreserveRatio(true);
-                        imageView.setFitHeight(50); // or the size you want
-                    }
-
-                    setGraphic(hBox);
-                }
-            }
-        });
     }
 
-    private void switchWallet(String wallet) {
-        System.out.println(wallet);
+    private void buyCryptoCurrency(CryptoCurrency crypto) {
+        System.out.println(crypto);
+    }
+
+    private void switchWallet(Wallet wallet) {
+        titleWallet.setText(wallet.getTitle());
+        moneyWallet.setText(wallet.getMoney() + " " + wallet.getCurrency());
+        descriptionWallet.setText(currentUser.getWallets().get(0).getDescription());
     }
 
     @FXML
@@ -249,7 +252,7 @@ public class HomeController implements Initializable {
         wallet.getTransactions().add(transaction);
         currentUser.getWallets().add(wallet);
         MenuItem menuItem = new MenuItem(title);
-        menuItem.setOnAction(e->switchWallet(e.getTarget().toString()));
+        menuItem.setOnAction(e -> switchWallet(wallet));
         walletsItems.getItems().add(menuItem);
         popupStage.close();
 
@@ -286,49 +289,5 @@ public class HomeController implements Initializable {
     private News fetchNewsFromApi() {
         ApiCaller apiCaller = new ApiCaller();
         return apiCaller.getLatestNews();
-    }
-
-    private void displayNews(News cryptoArticlesApi) {
-        ObservableList<Articles> articlesList = FXCollections.observableArrayList(cryptoArticlesApi.getData());
-        newsListView.setItems(articlesList);
-        // Ajout de l'écouteur de clics
-        newsListView.setOnMouseClicked(event -> {
-            Articles article = (Articles) newsListView.getSelectionModel().getSelectedItem();
-            if (article != null && event.getClickCount() == 1) {
-                showArticlePopup(article);
-            }
-        });
-        newsListView.refresh(); // Rafraîchir la ListView après avoir défini les éléments
-    }
-
-    private void showArticlePopup(Articles article) {
-        // Création du dialog
-        Dialog<Void> dialog = new Dialog<>();
-        dialog.setTitle(article.getTitle());
-
-        // Création du GridPane et mise en place des détails de l'article
-        GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(20, 150, 10, 10));
-
-        ImageView imageView = new ImageView();
-        if (article.getImageurl() != null && !article.getImageurl().isEmpty()) {
-            Image image = new Image(article.getImageurl(), true); // true to load in background
-            imageView.setImage(image);
-            imageView.setPreserveRatio(true);
-            imageView.setFitHeight(200); // Adjust as necessary
-        }
-
-        Text contentText = new Text(article.getBody());
-        contentText.setWrappingWidth(300); // Adjust as necessary
-
-        grid.add(imageView, 0, 0);
-        grid.add(contentText, 0, 1);
-
-        dialog.getDialogPane().setContent(grid);
-        dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
-
-        dialog.showAndWait();
     }
 }
