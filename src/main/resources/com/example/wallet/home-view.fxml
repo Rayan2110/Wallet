@@ -1,20 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.chart.PieChart?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.control.cell.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
-<BorderPane prefHeight="1024.0" prefWidth="768.0" xmlns="http://javafx.com/javafx/16"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.wallet.controller.home.HomeController">
+<?import javafx.scene.text.*?>
+
+<BorderPane prefHeight="1024.0" prefWidth="768.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.wallet.controller.HomeController">
 
     <top>
         <VBox alignment="CENTER" spacing="5">
             <MenuBar>
                 <menus>
-                    <Menu mnemonicParsing="false" text="Accueil"/>
+                    <Menu mnemonicParsing="false" text="Accueil" />
                     <Menu fx:id="walletsItems" mnemonicParsing="false" text="Vos Wallets">
                         <items>
 
@@ -119,6 +118,14 @@
         </VBox>
     </right>
     <bottom>
-        <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER"/>
+            <TableView fx:id="transactionsTableView" prefHeight="100.0" prefWidth="1024">
+              <columns>
+                <TableColumn fx:id="typeField" prefWidth="204" text="Type" />
+                <TableColumn fx:id="priceField" prefWidth="204" text="Price" />
+                  <TableColumn fx:id="dateField" prefWidth="204" text="Date" />
+                  <TableColumn fx:id="amountField" prefWidth="204" text="Amount" />
+                  <TableColumn fx:id="tokenField" prefWidth="205" text="Token" />
+              </columns>
+            </TableView>
     </bottom>
 </BorderPane>
