@@ -71,6 +71,21 @@ public class HomeController implements Initializable {
     @FXML
     private Menu walletsItems;
 
+    @FXML
+    private TableView<Transaction> transactionsTableView;
+    @FXML
+    private TableColumn<Transaction, Number> priceField;
+    @FXML
+    private TableColumn<Transaction, String> dateField;
+    @FXML
+    private TableColumn<Transaction, String> typeField;
+    @FXML
+    private TableColumn<Transaction, Number> amountField;
+    @FXML
+    private TableColumn<Transaction, String> tokenField;
+
+    private ObservableList<Transaction> transactionData = FXCollections.observableArrayList();
+
     private Wallet currentWallet;
 
     @Override
@@ -89,6 +104,21 @@ public class HomeController implements Initializable {
             titleWallet.setText(currentUser.getWallets().get(0).getTitle());
             moneyWallet.setText(currentUser.getWallets().get(0).getMoney() + " " + currentUser.getWallets().get(0).getCurrency());
         }
+        dateField.setCellValueFactory(new PropertyValueFactory<>("date"));
+        typeField.setCellValueFactory(new PropertyValueFactory<>("transactionType"));
+        amountField.setCellValueFactory(new PropertyValueFactory<>("amount"));
+        tokenField.setCellValueFactory(new PropertyValueFactory<>("token"));
+        priceField.setCellValueFactory(new PropertyValueFactory<>("price"));
+
+        // Chargez vos transactions depuis le fichier ici
+        List<Transaction> transactions = currentUser.getWallets().get(0).getTransactions();
+        transactionData.addAll(transactions); // Ajouter les transactions à la liste observable
+        transactionsTableView.setItems(transactionData);
+
+        transactionsTableView.setItems(transactionData);
+
+        transactionsTableView.refresh();
+
 
         List<CryptoCurrency> cryptoDataApi = fetchDataFromApi();
         News cryptoArticlesApi = fetchNewsFromApi();
@@ -331,4 +361,6 @@ public class HomeController implements Initializable {
 
         dialog.showAndWait();
     }
+
+
 }

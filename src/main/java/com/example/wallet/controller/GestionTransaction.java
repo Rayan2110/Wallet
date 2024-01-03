@@ -9,6 +9,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class GestionTransaction {
 
@@ -35,6 +37,8 @@ public class GestionTransaction {
         }
         return lineCount;
     }
+
+    // Méthode pour filtrer les transactions par identifiant de portefeuille
 
     public void getAllTransactions(User currentUser) {
         try (BufferedReader reader = new BufferedReader(new FileReader(cheminFichier))) {

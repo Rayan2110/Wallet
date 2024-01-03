@@ -1,3 +1,4 @@
-Id|Title|Description|Money|DateOfCreation|Currency|IdUser
+IdWallet|Title|Description|Money|DateOfCreation|Currency|IdUser
 1|rapji|dixo|7000.0|2024-01-02T16:28:51.197490400|EUR|1
 2|xoeldap|f redsz  zs|654123.0|2024-01-02T16:54:20.758481500|EUR|1
+3|Rayan|stack|700.0|2024-01-03T14:18:27.642449200|USD|1
