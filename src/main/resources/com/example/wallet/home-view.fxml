@@ -41,15 +41,14 @@
                             <Font name="Arial" size="21.0"/>
                         </font>
                         <VBox.margin>
-                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                         </VBox.margin>
                     </Label>
-                    <Region/>
+                    <Region prefHeight="1.0" prefWidth="768.0" />
                     <PieChart prefHeight="150" prefWidth="768.0">
                         <!-- PieChart data -->
                     </PieChart>
-                    <Label fx:id="descriptionWallet" contentDisplay="CENTER" layoutX="382.0" layoutY="63.0" text="."
-                           textAlignment="CENTER" textFill="#00223c">
+                    <Label fx:id="descriptionWallet" contentDisplay="CENTER" layoutX="382.0" layoutY="63.0" text="." textAlignment="CENTER" textFill="#00223c">
                         <font>
                             <Font name="Arial" size="15.0"/>
                         </font>
@@ -59,9 +58,8 @@
             <HBox alignment="CENTER" prefHeight="66.0" prefWidth="766.0" spacing="5">
                 <Button style="-fx-background-color: green;" text="Vendre"/>
                 <Button style="-fx-background-color: red;" text="Acheter"/>
-                <Button style="-fx-background-color: blue;" text="Epargne"/>
-                <Button fx:id="addWallet" onAction="#onAddMoneyButtonClick" style="-fx-background-color: yellow;"
-                        text="New Wallet"/>
+                <Button style="-fx-background-color: blue;" text="Epargne" onAction="#onHandleEpargneButton" />
+                <Button fx:id="addWallet" onAction="#onAddMoneyButtonClick" style="-fx-background-color: yellow;" text="New Wallet" />
             </HBox>
         </VBox>
     </top>
