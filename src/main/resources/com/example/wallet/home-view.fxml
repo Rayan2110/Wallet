@@ -20,7 +20,7 @@
                     </Menu>
                     <Menu mnemonicParsing="false" text="Vos Transactions">
                         <items>
-                            <MenuItem mnemonicParsing="false" text="About"/>
+                            <MenuItem mnemonicParsing="false" text="About" />
                         </items>
                     </Menu>
                 </menus>
@@ -29,36 +29,35 @@
                 <children>
                     <Label fx:id="titleWallet" text="TITLE" textFill="#434343">
                         <font>
-                            <Font name="Arial Bold" size="20.0"/>
+                            <Font name="Arial Bold" size="20.0" />
                         </font>
                         <VBox.margin>
-                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                         </VBox.margin>
                     </Label>
-                    <Label fx:id="moneyWallet" contentDisplay="CENTER" text="0€" textAlignment="CENTER"
-                           textFill="#686868">
+                    <Label fx:id="moneyWallet" contentDisplay="CENTER" text="0€" textAlignment="CENTER" textFill="#686868">
                         <font>
-                            <Font name="Arial" size="21.0"/>
+                            <Font name="Arial" size="21.0" />
                         </font>
                         <VBox.margin>
                             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                         </VBox.margin>
                     </Label>
                     <Region prefHeight="1.0" prefWidth="768.0" />
-                    <PieChart prefHeight="150" prefWidth="768.0">
+                    <PieChart fx:id="pieChart" prefHeight="150" prefWidth="768.0">
                         <!-- PieChart data -->
                     </PieChart>
                     <Label fx:id="descriptionWallet" contentDisplay="CENTER" layoutX="382.0" layoutY="63.0" text="." textAlignment="CENTER" textFill="#00223c">
                         <font>
-                            <Font name="Arial" size="15.0"/>
+                            <Font name="Arial" size="15.0" />
                         </font>
                     </Label>
                 </children>
             </VBox>
             <HBox alignment="CENTER" prefHeight="66.0" prefWidth="766.0" spacing="5">
-                <Button style="-fx-background-color: green;" text="Vendre"/>
-                <Button style="-fx-background-color: red;" text="Acheter"/>
-                <Button style="-fx-background-color: blue;" text="Epargne" onAction="#onHandleEpargneButton" />
+                <Button style="-fx-background-color: green;" text="Vendre" />
+                <Button style="-fx-background-color: red;" text="Acheter" />
+                <Button onAction="#onHandleEpargneButton" style="-fx-background-color: blue;" text="Epargne" />
                 <Button fx:id="addWallet" onAction="#onAddMoneyButtonClick" style="-fx-background-color: yellow;" text="New Wallet" />
             </HBox>
         </VBox>
@@ -69,46 +68,46 @@
             <columns>
                 <TableColumn fx:id="imageCol" prefWidth="76.0">
                     <cellFactory>
-                        <PropertyValueFactory property="value"/>
+                        <PropertyValueFactory property="value" />
                     </cellFactory>
                 </TableColumn>
                 <TableColumn fx:id="nameCol" prefWidth="76.0" text="Nom">
                     <cellValueFactory>
-                        <PropertyValueFactory property="name"/>
+                        <PropertyValueFactory property="name" />
                     </cellValueFactory>
                 </TableColumn>
 
                 <TableColumn fx:id="symbolCol" prefWidth="65.0" text="Symbole">
                     <cellValueFactory>
-                        <PropertyValueFactory property="symbol"/>
+                        <PropertyValueFactory property="symbol" />
                     </cellValueFactory>
                 </TableColumn>
 
                 <TableColumn fx:id="priceCol" prefWidth="106.0" text="Prix">
                     <cellValueFactory>
-                        <PropertyValueFactory property="currentPrice"/>
+                        <PropertyValueFactory property="currentPrice" />
                     </cellValueFactory>
                 </TableColumn>
 
                 <TableColumn fx:id="marketCapCol" prefWidth="165.0" text="Capitalisation boursière">
                     <cellValueFactory>
-                        <PropertyValueFactory property="marketCap"/>
+                        <PropertyValueFactory property="marketCap" />
                     </cellValueFactory>
                 </TableColumn>
 
                 <TableColumn fx:id="last7dCol" prefWidth="350.0" text="Last 7 days">
                     <cellValueFactory>
-                        <PropertyValueFactory property="sparklineIn7d"/>
+                        <PropertyValueFactory property="sparklineIn7d" />
                     </cellValueFactory>
                 </TableColumn>
-                <TableColumn fx:id="actionCol" prefWidth="100.0" text="Action"/>
+                <TableColumn fx:id="actionCol" prefWidth="100.0" text="Action" />
             </columns>
         </TableView>
     </center>
     <right>
         <VBox fx:id="newsVBox" prefHeight="714.0" prefWidth="280.0" spacing="10" style="-fx-background-color: #EEEEEE;">
             <!-- Changed color for a lighter one -->
-            <Text style="-fx-font-weight: bold; -fx-font-size: 16px;" text="News" VBox.vgrow="NEVER"/>
+            <Text style="-fx-font-weight: bold; -fx-font-size: 16px;" text="News" VBox.vgrow="NEVER" />
             <ListView fx:id="newsListView" VBox.vgrow="ALWAYS">
                 <!-- The news items will be added here programmatically -->
             </ListView>

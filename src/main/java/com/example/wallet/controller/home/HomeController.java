@@ -15,15 +15,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.chart.CategoryAxis;
-import javafx.scene.chart.LineChart;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.XYChart;
+import javafx.scene.chart.*;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -31,9 +29,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class HomeController implements Initializable {
 
@@ -79,6 +75,9 @@ public class HomeController implements Initializable {
 
     @FXML
     private Menu walletsItems;
+
+    @FXML
+    private PieChart pieChart;
 
     @FXML
     private TableView<Transaction> transactionsTableView;
@@ -219,6 +218,39 @@ public class HomeController implements Initializable {
         });
         // Utilise setItems sur l'instance existante
         tableView.setItems(cryptoData);
+
+        PieChart.Data emptyData = new PieChart.Data("", 0.001);
+
+        // Ajout de la donnée fictive au PieChart
+        pieChart.getData().add(emptyData);
+
+        // Configuration optionnelle pour masquer la légende et les étiquettes
+        pieChart.setLegendVisible(false);
+        pieChart.setLabelsVisible(false);
+
+        PieChart.Data segment1 = new PieChart.Data("Segment 1", 25);
+        PieChart.Data segment2 = new PieChart.Data("Segment 2", 75);
+
+        pieChart.getData().addAll(segment1, segment2);
+
+        // Ajouter des infobulles pour chaque segment
+        addTooltipToChartData(segment1, "Info sur Segment 1");
+        addTooltipToChartData(segment2, "Info sur Segment 2");
+
+        // Autres configurations
+        pieChart.setLabelsVisible(false);
+
+    }
+
+
+    private void addTooltipToChartData(PieChart.Data data, String info) {
+        Tooltip tooltip = new Tooltip(info);
+        data.getNode().addEventHandler(MouseEvent.MOUSE_MOVED, e -> {
+            tooltip.show(data.getNode(), e.getScreenX(), e.getScreenY() + 15); // Position ajustée
+        });
+        data.getNode().addEventHandler(MouseEvent.MOUSE_EXITED, e -> {
+            tooltip.hide();
+        });
     }
 
     @FXML
