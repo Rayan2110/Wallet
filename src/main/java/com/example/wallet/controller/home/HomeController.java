@@ -105,6 +105,7 @@ public class HomeController implements Initializable {
         newsDisplay.setupNewsListView(newsListView, cryptoArticlesApi.getData());
 
         currentUser = GestionUser.getInstance().getCurrentUser();
+        currentWallet = currentUser.getWallets().get(0);
         // Get All Wallets
         if (currentUser != null && currentUser.getWallets() != null && currentUser.getWallets().size() > 0) {
             System.out.println("Nombre de wallets : " + currentUser.getWallets().size());
@@ -117,9 +118,9 @@ public class HomeController implements Initializable {
                 });
                 walletsItems.getItems().add(menuItem);
             }
-            titleWallet.setText(currentUser.getWallets().get(0).getTitle());
-            moneyWallet.setText(currentUser.getWallets().get(0).getMoney() + " " + currentUser.getWallets().get(0).getCurrency());
-            descriptionWallet.setText(currentUser.getWallets().get(0).getDescription());
+            titleWallet.setText(currentWallet.getTitle());
+            moneyWallet.setText(currentWallet.getMoney() + " " + currentWallet.getCurrency());
+            descriptionWallet.setText(currentWallet.getDescription());
         }
         dateField.setCellValueFactory(new PropertyValueFactory<>("date"));
         typeField.setCellValueFactory(new PropertyValueFactory<>("transactionType"));
@@ -193,7 +194,7 @@ public class HomeController implements Initializable {
                         buyButton.setOnAction(event -> {
                             CryptoCurrency crypto = getTableView().getItems().get(getIndex());
                             // Mettez ici la logique pour traiter l'achat
-                            buyCryptoCurrency(crypto);
+                            buyCryptoCurrency(crypto, currentUser, currentWallet);
                         });
                     }
                 }
@@ -219,6 +220,7 @@ public class HomeController implements Initializable {
         // Utilise setItems sur l'instance existante
         tableView.setItems(cryptoData);
     }
+
     @FXML
 
     private void onHandleEpargneButton() {
@@ -260,20 +262,30 @@ public class HomeController implements Initializable {
     }
 
 
-    private void buyCryptoCurrency(CryptoCurrency crypto) {
+    private void buyCryptoCurrency(CryptoCurrency crypto, User currentUser, Wallet currentWallet) {
         System.out.println(crypto);
         // calcul
-        PurchaseTokenPopup popup = new PurchaseTokenPopup();
-        double result = popup.showAndWait();
+        PurchaseTokenPopup popup = new PurchaseTokenPopup(crypto, currentWallet);
+        float result = popup.showAndWait();
+
         System.out.println("Nombre entré: " + result);
+
+        double amount = result / crypto.getCurrentPrice();
+        Transaction transaction = new Transaction(TransactionType.PURCHASE_TOKEN.name(), result, LocalDateTime.now(), amount ,crypto.getSymbol());
+        GestionTransaction gestionTransaction = new GestionTransaction();
+        gestionTransaction.writeTransaction(transaction, currentWallet.getId(), currentUser.getId());
+        currentWallet.getTransactions().add(transaction);
+        transactionData.add(transaction);
+        transactionsTableView.refresh();
         // Utilisez 'result' comme nécessaire
 
     }
 
     private void switchWallet(Wallet wallet) {
-        titleWallet.setText(wallet.getTitle());
-        moneyWallet.setText(wallet.getMoney() + " " + wallet.getCurrency());
-        descriptionWallet.setText(currentUser.getWallets().get(0).getDescription());
+        currentWallet = wallet;
+        titleWallet.setText(currentWallet.getTitle());
+        moneyWallet.setText(currentWallet.getMoney() + " " + currentWallet.getCurrency());
+        descriptionWallet.setText(currentWallet.getDescription());
     }
 
     @FXML
@@ -360,7 +372,7 @@ public class HomeController implements Initializable {
     // Méthode pour appeler l'API et récupérer les données
     private List<CryptoCurrency> fetchDataFromApi() {
         ApiCaller apiCaller = new ApiCaller();
-        return apiCaller.getAllCoinsMarket("usd", 10, "market_cap_desc", 1, true, "7d", "en");
+        return apiCaller.getAllCoinsMarket("eur", 10, "market_cap_desc", 1, true, "7d", "fr");
     }
 
     private News fetchNewsFromApi() {

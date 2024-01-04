@@ -14,7 +14,7 @@ public class Transaction {
 
     private LocalDateTime date;
 
-    private float amount; // prix en terme d'unité ( crypto, action, etc )
+    private double amount; // prix en terme d'unité ( crypto, action, etc )
 
     private String token;
 
@@ -27,7 +27,7 @@ public class Transaction {
         this.token = token;
     }
 
-    public Transaction(String transactionType, float price, LocalDateTime date, float amount, String token) {
+    public Transaction(String transactionType, float price, LocalDateTime date, double amount, String token) {
         this.transactionType = transactionType;
         this.price = price;
         this.date = date;
@@ -67,7 +67,7 @@ public class Transaction {
         this.date = date;
     }
 
-    public float getAmount() {
+    public double getAmount() {
         return amount;
     }
 
