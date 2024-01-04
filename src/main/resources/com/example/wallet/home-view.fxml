@@ -56,9 +56,10 @@
             </VBox>
             <HBox alignment="CENTER" prefHeight="66.0" prefWidth="766.0" spacing="5">
                 <Button style="-fx-background-color: green;" text="Vendre" />
-                <Button style="-fx-background-color: red;" text="Acheter" />
+                <Button fx:id="dépotButton" onAction="#onHandleDepotButton" style="-fx-background-color: red;" text="Dépot" />
                 <Button onAction="#onHandleEpargneButton" style="-fx-background-color: blue;" text="Epargne" />
                 <Button fx:id="addWallet" onAction="#onAddMoneyButtonClick" style="-fx-background-color: yellow;" text="New Wallet" />
+            <Button fx:id="cloneButton" layoutX="326.0" layoutY="31.0" onAction="#onHandleCloneButton" style="-fx-background-color: #800080;" text="Cloner" />
             </HBox>
         </VBox>
     </top>

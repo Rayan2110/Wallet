@@ -5,7 +5,8 @@ public enum TransactionType {
     DEPOSIT_MONEY("Dépot"),
     PURCHASE_TOKEN("Achat"),
     SALE_TOKEN("Vente"),
-    SAVING_MONEY("Épargne");
+    SAVING_MONEY("Épargne"),
+    CLONE_WALLET("Clone");
 
     private final String displayName;
 
