@@ -1,9 +1,7 @@
 package com.example.wallet.entity;
 
-import com.example.wallet.controller.TransactionType;
-
 import java.time.LocalDateTime;
-import java.util.Date;
+
 public class Transaction {
 
     private long id;
@@ -67,7 +65,7 @@ public class Transaction {
         this.date = date;
     }
 
-    public float getAmount() {
+    public double getAmount() {
         return amount;
     }
 
