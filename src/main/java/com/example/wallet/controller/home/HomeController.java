@@ -221,6 +221,12 @@ public class HomeController implements Initializable {
 
     private void buyCryptoCurrency(CryptoCurrency crypto) {
         System.out.println(crypto);
+        // calcul
+        PurchaseTokenPopup popup = new PurchaseTokenPopup();
+        double result = popup.showAndWait();
+        System.out.println("Nombre entré: " + result);
+        // Utilisez 'result' comme nécessaire
+
     }
 
     private void switchWallet(Wallet wallet) {
