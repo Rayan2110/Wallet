@@ -11,6 +11,7 @@ import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -22,9 +23,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 
 import java.io.IOException;
 import java.net.URL;
@@ -332,6 +335,18 @@ public class HomeController implements Initializable {
         titleWallet.setText(currentWallet.getTitle());
         moneyWallet.setText(currentWallet.getMoney() + " " + currentWallet.getCurrency());
         descriptionWallet.setText(currentWallet.getDescription());
+        updateTableTransaction(wallet);
+    }
+
+    private void updateTableTransaction(Wallet wallet) {
+        transactionData.clear();
+        List<Transaction> transactions = wallet.getTransactions();
+        transactionData.addAll(transactions);
+        transactionsTableView.setItems(transactionData);
+
+        transactionsTableView.setItems(transactionData);
+
+        transactionsTableView.refresh();
     }
 
     @FXML
@@ -425,4 +440,107 @@ public class HomeController implements Initializable {
         ApiCaller apiCaller = new ApiCaller();
         return apiCaller.getLatestNews();
     }
+
+    private Optional<Float> afficherDialogueDepot() {
+        TextInputDialog dialog = new TextInputDialog("0");
+        dialog.setTitle("Dépôt d'Argent");
+        dialog.setHeaderText("Déposer de l'argent");
+        dialog.setContentText("Veuillez entrer le montant du dépôt :");
+
+        Optional<String> result = dialog.showAndWait();
+        if (result.isPresent()) {
+            try {
+                return Optional.of(Float.parseFloat(result.get()));
+            } catch (NumberFormatException e) {
+                // Gérer l'erreur si l'entrée n'est pas un nombre valide
+                return Optional.empty();
+            }
+        } else {
+            return Optional.empty();
+        }
+
+    }
+
+    @FXML
+    public void onHandleDepotButton(ActionEvent actionEvent) {
+        Optional<Float> montantDepot = afficherDialogueDepot();
+        montantDepot.ifPresent(montant -> {
+            Transaction transaction = new Transaction(TransactionType.DEPOSIT_MONEY.name(), montant, LocalDateTime.now(), 0, null);
+            GestionTransaction gestionTransaction = new GestionTransaction();
+            gestionTransaction.writeTransaction(transaction, currentWallet.getId(), currentUser.getId());
+            currentWallet.getTransactions().add(transaction);
+            transactionData.add(transaction);
+            transactionsTableView.refresh();
+            currentWallet.setMoney(currentWallet.getMoney()+montant);
+            moneyWallet.setText(currentWallet.getMoney()+ " " + currentWallet.getCurrency());
+        });
+
+    }
+
+   public void onHandleCloneButton(ActionEvent actionEvent) {
+       Optional<Pair<String, String>> result = afficherDialogueClonage();
+
+       result.ifPresent(titreDescription -> {
+           String nouveauTitre = titreDescription.getKey();
+           String nouvelleDescription = titreDescription.getValue();
+
+           GestionWallet gestionWallet = new GestionWallet();
+           gestionWallet.newWallet(currentWallet, currentUser.getId());
+
+           Wallet wallet = new Wallet(nouveauTitre, nouvelleDescription, currentWallet.getMoney(), LocalDateTime.now(), currentWallet.getCurrency());
+           Transaction transaction = new Transaction(TransactionType.CLONE_WALLET.name(), currentWallet.getMoney(), LocalDateTime.now(), 0, null);
+
+           GestionTransaction gestionTransaction = new GestionTransaction();
+           gestionWallet.newWallet(wallet, currentUser.getId());
+           gestionTransaction.writeTransaction(transaction, wallet.getId(), currentUser.getId());
+
+           wallet.getTransactions().add(transaction);
+           currentUser.getWallets().add(wallet);
+
+           MenuItem menuItem = new MenuItem(nouveauTitre);
+           menuItem.setOnAction(e -> switchWallet(wallet));
+           walletsItems.getItems().add(menuItem);
+       });
+   }
+
+
+    private Optional<Pair<String, String>> afficherDialogueClonage() {
+        // Création de la boîte de dialogue
+        Dialog<Pair<String, String>> dialog = new Dialog<>();
+        dialog.setTitle("Cloner le Portefeuille");
+        dialog.setHeaderText("Entrez le titre et la description du nouveau portefeuille");
+
+        // Boutons
+        ButtonType btnCloner = new ButtonType("Cloner", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(btnCloner, ButtonType.CANCEL);
+
+        // Création des champs de saisie
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        TextField titre = new TextField();
+        titre.setPromptText("Titre");
+        TextField description = new TextField();
+        description.setPromptText("Description");
+
+        grid.add(new Label("Titre:"), 0, 0);
+        grid.add(titre, 1, 0);
+        grid.add(new Label("Description:"), 0, 1);
+        grid.add(description, 1, 1);
+
+        dialog.getDialogPane().setContent(grid);
+
+        // Convertit le résultat en paires titre-description lorsque le bouton Cloner est cliqué
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == btnCloner) {
+                return new Pair<>(titre.getText(), description.getText());
+            }
+            return null;
+        });
+
+        return dialog.showAndWait();
+    }
+
 }
