@@ -29,7 +29,9 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.ResourceBundle;
 
 public class HomeController implements Initializable {
 
@@ -228,14 +230,26 @@ public class HomeController implements Initializable {
         pieChart.setLegendVisible(false);
         pieChart.setLabelsVisible(false);
 
-        PieChart.Data segment1 = new PieChart.Data("Segment 1", 25);
-        PieChart.Data segment2 = new PieChart.Data("Segment 2", 75);
+        float totalMoney = currentWallet.getMoney();
+        float totalTransaction = 0;
+        for (Transaction transaction : currentWallet.getTransactions()) {
 
-        pieChart.getData().addAll(segment1, segment2);
-
-        // Ajouter des infobulles pour chaque segment
-        addTooltipToChartData(segment1, "Info sur Segment 1");
-        addTooltipToChartData(segment2, "Info sur Segment 2");
+            if ("PURCHASE_TOKEN".equals(transaction.getTransactionType())) {
+                PieChart.Data segment1 = new PieChart.Data(transaction.getToken(), (transaction.getPrice() * 100) / totalMoney);
+                totalTransaction += transaction.getPrice();
+                addTooltipToChartData(segment1, transaction.getToken());
+                pieChart.getData().add(segment1);
+            }
+            if ("SAVING_MONEY".equals(transaction.getTransactionType())) {
+                PieChart.Data segment1 = new PieChart.Data(transaction.getToken(), (transaction.getPrice() * 100) / totalMoney);
+                totalTransaction += transaction.getPrice();
+                addTooltipToChartData(segment1, transaction.getToken());
+                pieChart.getData().add(segment1);
+            }
+        }
+        PieChart.Data segment1 =  new PieChart.Data("Argent encore disponible", (totalTransaction * 100) / totalMoney);
+        addTooltipToChartData(segment1, "Argent encore disponible");
+        pieChart.getData().add(segment1);
 
         // Autres configurations
         pieChart.setLabelsVisible(false);
@@ -303,7 +317,7 @@ public class HomeController implements Initializable {
         System.out.println("Nombre entré: " + result);
 
         double amount = result / crypto.getCurrentPrice();
-        Transaction transaction = new Transaction(TransactionType.PURCHASE_TOKEN.name(), result, LocalDateTime.now(), amount ,crypto.getSymbol());
+        Transaction transaction = new Transaction(TransactionType.PURCHASE_TOKEN.name(), result, LocalDateTime.now(), amount, crypto.getSymbol());
         GestionTransaction gestionTransaction = new GestionTransaction();
         gestionTransaction.writeTransaction(transaction, currentWallet.getId(), currentUser.getId());
         currentWallet.getTransactions().add(transaction);
