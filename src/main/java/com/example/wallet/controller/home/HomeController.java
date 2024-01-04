@@ -230,29 +230,31 @@ public class HomeController implements Initializable {
         pieChart.getData().add(emptyData);
 
         // Configuration optionnelle pour masquer la légende et les étiquettes
-        pieChart.setLegendVisible(false);
-        pieChart.setLabelsVisible(false);
+        pieChart.setLegendVisible(true);
+        pieChart.setLabelsVisible(true);
 
         float totalMoney = currentWallet.getMoney();
         float totalTransaction = 0;
         for (Transaction transaction : currentWallet.getTransactions()) {
 
             if ("PURCHASE_TOKEN".equals(transaction.getTransactionType())) {
-                PieChart.Data segment1 = new PieChart.Data(transaction.getToken(), (transaction.getPrice() * 100) / totalMoney);
+                String title = transaction.getToken();
+                PieChart.Data segment = new PieChart.Data(transaction.getToken(), (transaction.getPrice() * 100) / totalMoney);
                 totalTransaction += transaction.getPrice();
-                addTooltipToChartData(segment1, transaction.getToken());
-                pieChart.getData().add(segment1);
+                pieChart.getData().add(segment);
+                addTooltipToChartData(segment, title, transaction.getToken() + " : " + transaction.getPrice());
             }
             if ("SAVING_MONEY".equals(transaction.getTransactionType())) {
-                PieChart.Data segment1 = new PieChart.Data(transaction.getToken(), (transaction.getPrice() * 100) / totalMoney);
+                String title = transaction.getToken();
+                PieChart.Data segment = new PieChart.Data(transaction.getToken(), (transaction.getPrice() * 100) / totalMoney);
                 totalTransaction += transaction.getPrice();
-                addTooltipToChartData(segment1, transaction.getToken());
-                pieChart.getData().add(segment1);
+                pieChart.getData().add(segment);
+                addTooltipToChartData(segment, title, transaction.getToken() + " : " + transaction.getPrice());
             }
         }
-        PieChart.Data segment1 =  new PieChart.Data("Argent encore disponible", (totalTransaction * 100) / totalMoney);
-        addTooltipToChartData(segment1, "Argent encore disponible");
-        pieChart.getData().add(segment1);
+        PieChart.Data segment = new PieChart.Data("Argent encore disponible", (totalTransaction * 100) / totalMoney);
+        pieChart.getData().add(segment);
+        addTooltipToChartData(segment, String.valueOf((totalTransaction * 100) / totalMoney),"Argent encore disponible");
 
         // Autres configurations
         pieChart.setLabelsVisible(false);
@@ -260,10 +262,11 @@ public class HomeController implements Initializable {
     }
 
 
-    private void addTooltipToChartData(PieChart.Data data, String info) {
-        Tooltip tooltip = new Tooltip(info);
+    private void addTooltipToChartData(PieChart.Data data, String title, String tooltipText) {
+        Tooltip tooltip = new Tooltip(tooltipText);
+        data.setName(title);  // Ajouter un titre au segment
         data.getNode().addEventHandler(MouseEvent.MOUSE_MOVED, e -> {
-            tooltip.show(data.getNode(), e.getScreenX(), e.getScreenY() + 15); // Position ajustée
+            tooltip.show(data.getNode(), e.getScreenX(), e.getScreenY() + 15);
         });
         data.getNode().addEventHandler(MouseEvent.MOUSE_EXITED, e -> {
             tooltip.hide();
@@ -471,37 +474,37 @@ public class HomeController implements Initializable {
             currentWallet.getTransactions().add(transaction);
             transactionData.add(transaction);
             transactionsTableView.refresh();
-            currentWallet.setMoney(currentWallet.getMoney()+montant);
-            moneyWallet.setText(currentWallet.getMoney()+ " " + currentWallet.getCurrency());
+            currentWallet.setMoney(currentWallet.getMoney() + montant);
+            moneyWallet.setText(currentWallet.getMoney() + " " + currentWallet.getCurrency());
         });
 
     }
 
-   public void onHandleCloneButton(ActionEvent actionEvent) {
-       Optional<Pair<String, String>> result = afficherDialogueClonage();
+    public void onHandleCloneButton(ActionEvent actionEvent) {
+        Optional<Pair<String, String>> result = afficherDialogueClonage();
 
-       result.ifPresent(titreDescription -> {
-           String nouveauTitre = titreDescription.getKey();
-           String nouvelleDescription = titreDescription.getValue();
+        result.ifPresent(titreDescription -> {
+            String nouveauTitre = titreDescription.getKey();
+            String nouvelleDescription = titreDescription.getValue();
 
-           GestionWallet gestionWallet = new GestionWallet();
-           gestionWallet.newWallet(currentWallet, currentUser.getId());
+            GestionWallet gestionWallet = new GestionWallet();
+            gestionWallet.newWallet(currentWallet, currentUser.getId());
 
-           Wallet wallet = new Wallet(nouveauTitre, nouvelleDescription, currentWallet.getMoney(), LocalDateTime.now(), currentWallet.getCurrency());
-           Transaction transaction = new Transaction(TransactionType.CLONE_WALLET.name(), currentWallet.getMoney(), LocalDateTime.now(), 0, null);
+            Wallet wallet = new Wallet(nouveauTitre, nouvelleDescription, currentWallet.getMoney(), LocalDateTime.now(), currentWallet.getCurrency());
+            Transaction transaction = new Transaction(TransactionType.CLONE_WALLET.name(), currentWallet.getMoney(), LocalDateTime.now(), 0, null);
 
-           GestionTransaction gestionTransaction = new GestionTransaction();
-           gestionWallet.newWallet(wallet, currentUser.getId());
-           gestionTransaction.writeTransaction(transaction, wallet.getId(), currentUser.getId());
+            GestionTransaction gestionTransaction = new GestionTransaction();
+            gestionWallet.newWallet(wallet, currentUser.getId());
+            gestionTransaction.writeTransaction(transaction, wallet.getId(), currentUser.getId());
 
-           wallet.getTransactions().add(transaction);
-           currentUser.getWallets().add(wallet);
+            wallet.getTransactions().add(transaction);
+            currentUser.getWallets().add(wallet);
 
-           MenuItem menuItem = new MenuItem(nouveauTitre);
-           menuItem.setOnAction(e -> switchWallet(wallet));
-           walletsItems.getItems().add(menuItem);
-       });
-   }
+            MenuItem menuItem = new MenuItem(nouveauTitre);
+            menuItem.setOnAction(e -> switchWallet(wallet));
+            walletsItems.getItems().add(menuItem);
+        });
+    }
 
 
     private Optional<Pair<String, String>> afficherDialogueClonage() {
