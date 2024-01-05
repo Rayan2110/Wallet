@@ -123,7 +123,6 @@ public class HomeController implements Initializable {
                 walletsItems.getItems().add(menuItem);
             }
             titleWallet.setText(currentWallet.getTitle());
-            moneyWallet.setText(currentWallet.getMoney() + " " + currentWallet.getCurrency());
             descriptionWallet.setText(currentWallet.getDescription());
         }
         dateField.setCellValueFactory(new PropertyValueFactory<>("date"));
@@ -233,10 +232,18 @@ public class HomeController implements Initializable {
         pieChart.setLegendVisible(true);
         pieChart.setLabelsVisible(true);
 
-        float totalMoney = currentWallet.getMoney();
+        float totalMoney = 0;
         float totalTransaction = 0;
         for (Transaction transaction : currentWallet.getTransactions()) {
-
+            if ("CREATE_WALLET".equals(transaction.getTransactionType())) {
+                totalMoney += transaction.getPrice();
+            }
+            if ("CLONE_WALLET".equals(transaction.getTransactionType())) {
+                totalMoney += transaction.getPrice();
+            }
+            if ("DEPOSIT_MONEY".equals(transaction.getTransactionType())) {
+                totalMoney += transaction.getPrice();
+            }
             if ("PURCHASE_TOKEN".equals(transaction.getTransactionType())) {
                 String title = transaction.getToken();
                 PieChart.Data segment = new PieChart.Data(transaction.getToken(), (transaction.getPrice() * 100) / totalMoney);
@@ -249,12 +256,13 @@ public class HomeController implements Initializable {
                 PieChart.Data segment = new PieChart.Data(transaction.getToken(), (transaction.getPrice() * 100) / totalMoney);
                 totalTransaction += transaction.getPrice();
                 pieChart.getData().add(segment);
-                addTooltipToChartData(segment, title, transaction.getToken() + " : " + transaction.getPrice());
+                addTooltipToChartData(segment, title, "Épargne : " + transaction.getPrice());
             }
         }
+        moneyWallet.setText(totalMoney + " " + currentWallet.getCurrency());
         PieChart.Data segment = new PieChart.Data("Argent encore disponible", (totalTransaction * 100) / totalMoney);
         pieChart.getData().add(segment);
-        addTooltipToChartData(segment, String.valueOf((totalTransaction * 100) / totalMoney),"Argent encore disponible");
+        addTooltipToChartData(segment, String.valueOf(((totalMoney-totalTransaction) * 100) / totalMoney), "Argent encore disponible : " + (totalMoney - totalTransaction));
 
         // Autres configurations
         pieChart.setLabelsVisible(false);
