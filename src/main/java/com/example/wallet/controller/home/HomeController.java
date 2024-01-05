@@ -96,6 +96,13 @@ public class HomeController implements Initializable {
     private TableColumn<Transaction, Number> amountField;
     @FXML
     private TableColumn<Transaction, String> tokenField;
+    @FXML
+    private TextField pageNumberField; // Assurez-vous que ce champ est lié au FXML
+    @FXML
+    private TextField pageSizeField; // Assurez-vous que ce champ est lié au FXML
+
+
+
 
     private ObservableList<Transaction> transactionData = FXCollections.observableArrayList();
 
@@ -141,7 +148,7 @@ public class HomeController implements Initializable {
         transactionsTableView.refresh();
 
 
-        List<CryptoCurrency> cryptoDataApi = fetchDataFromApi();
+        List<CryptoCurrency> cryptoDataApi = fetchDataFromApi(1, 10);
 
         ObservableList<CryptoCurrency> cryptoData = FXCollections.observableArrayList();
         cryptoData.addAll(cryptoDataApi);
@@ -442,10 +449,16 @@ public class HomeController implements Initializable {
     }
 
     // Méthode pour appeler l'API et récupérer les données
-    private List<CryptoCurrency> fetchDataFromApi() {
+    /*private List<CryptoCurrency> fetchDataFromApi() {
         ApiCaller apiCaller = new ApiCaller();
         return apiCaller.getAllCoinsMarket("eur", 10, "market_cap_desc", 1, true, "7d", "fr");
+    }*/
+
+    private List<CryptoCurrency> fetchDataFromApi(int pageNumber, int pageSize) {
+        ApiCaller apiCaller = new ApiCaller();
+        return apiCaller.getAllCoinsMarket("eur", pageSize, "market_cap_desc", pageNumber, true, "7d", "fr");
     }
+
 
     private News fetchNewsFromApi() {
         ApiCaller apiCaller = new ApiCaller();
@@ -554,4 +567,28 @@ public class HomeController implements Initializable {
         return dialog.showAndWait();
     }
 
+    @FXML
+    public void onPrevPage(ActionEvent actionEvent) {
+        int currentPage = Integer.parseInt(pageNumberField.getText());
+        if (currentPage > 1) {
+            currentPage--;
+            pageNumberField.setText(String.valueOf(currentPage));
+            updateTableView();
+        }
+    }
+    @FXML
+    public void onNextPage(ActionEvent actionEvent) {
+        int currentPage = Integer.parseInt(pageNumberField.getText());
+        currentPage++;
+        pageNumberField.setText(String.valueOf(currentPage));
+        updateTableView();
+    }
+
+    private void updateTableView() {
+        int currentPage = Integer.parseInt(pageNumberField.getText());
+        int pageSize = Integer.parseInt(pageSizeField.getText());
+        // Ici, insérez votre logique pour récupérer les données en fonction de la page actuelle et de la taille de la page
+        ObservableList<CryptoCurrency> data = (ObservableList<CryptoCurrency>) fetchDataFromApi(currentPage, pageSize);
+        tableView.setItems(data);
+    }
 }
