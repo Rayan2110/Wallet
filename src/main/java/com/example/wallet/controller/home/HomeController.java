@@ -101,6 +101,8 @@ public class HomeController implements Initializable {
 
     private Wallet currentWallet;
 
+    private float moneyLeft;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         newsDisplay = new NewsDisplay();
@@ -223,15 +225,13 @@ public class HomeController implements Initializable {
         });
         // Utilise setItems sur l'instance existante
         tableView.setItems(cryptoData);
+        updatePieChart();
+    }
 
+    private void updatePieChart() {
         PieChart.Data emptyData = new PieChart.Data("", 0.001);
 
-        // Ajout de la donnée fictive au PieChart
         pieChart.getData().add(emptyData);
-
-        // Configuration optionnelle pour masquer la légende et les étiquettes
-        pieChart.setLegendVisible(true);
-        pieChart.setLabelsVisible(true);
 
         float totalMoney = 0;
         float totalTransaction = 0;
@@ -263,11 +263,11 @@ public class HomeController implements Initializable {
         moneyWallet.setText(totalMoney + " " + currentWallet.getCurrency());
         PieChart.Data segment = new PieChart.Data("Argent encore disponible", (totalTransaction * 100) / totalMoney);
         pieChart.getData().add(segment);
-        addTooltipToChartData(segment, String.valueOf(((totalMoney-totalTransaction) * 100) / totalMoney), "Argent encore disponible : " + (totalMoney - totalTransaction));
+        moneyLeft = totalMoney - totalTransaction;
+        addTooltipToChartData(segment, String.valueOf(((totalMoney-totalTransaction) * 100) / totalMoney), "Argent encore disponible : " + moneyLeft);
 
         // Autres configurations
         pieChart.setLabelsVisible(false);
-
     }
 
 
@@ -326,17 +326,11 @@ public class HomeController implements Initializable {
     private void buyCryptoCurrency(CryptoCurrency crypto, User currentUser, Wallet currentWallet) {
         System.out.println(crypto);
         // calcul
-        PurchaseTokenPopup popup = new PurchaseTokenPopup(crypto, currentWallet);
+        PurchaseTokenPopup popup = new PurchaseTokenPopup(crypto, currentWallet, currentUser.getId(), transactionData);
         float result = popup.showAndWait();
 
         System.out.println("Nombre entré: " + result);
 
-        double amount = result / crypto.getCurrentPrice();
-        Transaction transaction = new Transaction(TransactionType.PURCHASE_TOKEN.name(), result, LocalDateTime.now(), amount, crypto.getSymbol());
-        GestionTransaction gestionTransaction = new GestionTransaction();
-        gestionTransaction.writeTransaction(transaction, currentWallet.getId(), currentUser.getId());
-        currentWallet.getTransactions().add(transaction);
-        transactionData.add(transaction);
         transactionsTableView.refresh();
         // Utilisez 'result' comme nécessaire
 
