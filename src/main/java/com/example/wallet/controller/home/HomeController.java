@@ -39,6 +39,8 @@ import java.util.ResourceBundle;
 public class HomeController implements Initializable {
 
     @FXML
+    public Label moneyLeftLabel;
+    @FXML
     private Label titleWallet;
 
     @FXML
@@ -111,7 +113,9 @@ public class HomeController implements Initializable {
         newsDisplay.setupNewsListView(newsListView, cryptoArticlesApi.getData());
 
         currentUser = GestionUser.getInstance().getCurrentUser();
-        currentWallet = currentUser.getWallets().get(0);
+        if (currentUser.getWallets() != null && currentUser.getWallets().size() > 0) {
+            currentWallet = currentUser.getWallets().get(0);
+        }
         // Get All Wallets
         if (currentUser != null && currentUser.getWallets() != null && currentUser.getWallets().size() > 0) {
             System.out.println("Nombre de wallets : " + currentUser.getWallets().size());
@@ -135,14 +139,13 @@ public class HomeController implements Initializable {
         priceField.setCellValueFactory(new PropertyValueFactory<>("price"));
 
         // Chargez vos transactions depuis le fichier ici
-        List<Transaction> transactions = currentUser.getWallets().get(0).getTransactions();
-        transactionData.addAll(transactions); // Ajouter les transactions à la liste observable
-        transactionsTableView.setItems(transactionData);
+        if (currentWallet != null) {
+            List<Transaction> transactions = currentWallet.getTransactions();
+            transactionData.addAll(transactions); // Ajouter les transactions à la liste observable
+            transactionsTableView.setItems(transactionData);
 
-        transactionsTableView.setItems(transactionData);
-
-        transactionsTableView.refresh();
-
+            transactionsTableView.refresh();
+        }
 
         List<CryptoCurrency> cryptoDataApi = fetchDataFromApi();
 
@@ -229,45 +232,50 @@ public class HomeController implements Initializable {
     }
 
     private void updatePieChart() {
-        PieChart.Data emptyData = new PieChart.Data("", 0.001);
+        if (currentWallet != null) {
+            PieChart.Data emptyData = new PieChart.Data("", 0.001);
+            pieChart.getData().clear();
+            pieChart.getData().add(emptyData);
 
-        pieChart.getData().add(emptyData);
+            float totalMoney = 0;
+            float totalTransaction = 0;
 
-        float totalMoney = 0;
-        float totalTransaction = 0;
-        for (Transaction transaction : currentWallet.getTransactions()) {
-            if ("CREATE_WALLET".equals(transaction.getTransactionType())) {
-                totalMoney += transaction.getPrice();
+            for (Transaction transaction : currentWallet.getTransactions()) {
+                if ("CREATE_WALLET".equals(transaction.getTransactionType())) {
+                    totalMoney += transaction.getPrice();
+                }
+                if ("CLONE_WALLET".equals(transaction.getTransactionType())) {
+                    totalMoney += transaction.getPrice();
+                }
+                if ("DEPOSIT_MONEY".equals(transaction.getTransactionType())) {
+                    totalMoney += transaction.getPrice();
+                }
             }
-            if ("CLONE_WALLET".equals(transaction.getTransactionType())) {
-                totalMoney += transaction.getPrice();
+            for (Transaction transaction : currentWallet.getTransactions()) {
+                if ("PURCHASE_TOKEN".equals(transaction.getTransactionType())) {
+                    String title = transaction.getToken();
+                    PieChart.Data segment = new PieChart.Data(transaction.getToken(), (transaction.getPrice() * 100) / totalMoney);
+                    totalTransaction += transaction.getPrice();
+                    pieChart.getData().add(segment);
+                    addTooltipToChartData(segment, title, transaction.getToken() + " : " + transaction.getPrice());
+                }
+                if ("SAVING_MONEY".equals(transaction.getTransactionType())) {
+                    String title = transaction.getToken();
+                    PieChart.Data segment = new PieChart.Data(transaction.getToken(), (transaction.getPrice() * 100) / totalMoney);
+                    totalTransaction += transaction.getPrice();
+                    pieChart.getData().add(segment);
+                    addTooltipToChartData(segment, title, "Épargne : " + transaction.getPrice());
+                }
             }
-            if ("DEPOSIT_MONEY".equals(transaction.getTransactionType())) {
-                totalMoney += transaction.getPrice();
-            }
-            if ("PURCHASE_TOKEN".equals(transaction.getTransactionType())) {
-                String title = transaction.getToken();
-                PieChart.Data segment = new PieChart.Data(transaction.getToken(), (transaction.getPrice() * 100) / totalMoney);
-                totalTransaction += transaction.getPrice();
-                pieChart.getData().add(segment);
-                addTooltipToChartData(segment, title, transaction.getToken() + " : " + transaction.getPrice());
-            }
-            if ("SAVING_MONEY".equals(transaction.getTransactionType())) {
-                String title = transaction.getToken();
-                PieChart.Data segment = new PieChart.Data(transaction.getToken(), (transaction.getPrice() * 100) / totalMoney);
-                totalTransaction += transaction.getPrice();
-                pieChart.getData().add(segment);
-                addTooltipToChartData(segment, title, "Épargne : " + transaction.getPrice());
-            }
+            moneyWallet.setText(totalMoney + " " + currentWallet.getCurrency());
+            moneyLeft = totalMoney - totalTransaction;
+            PieChart.Data segment = new PieChart.Data("Argent encore disponible", moneyLeft * 100 / totalMoney);
+            pieChart.getData().add(segment);
+            addTooltipToChartData(segment, String.valueOf(((totalMoney - totalTransaction) * 100) / totalMoney), "Argent encore disponible : " + moneyLeft);
+
+            // Autres configurations
+            pieChart.setLabelsVisible(false);
         }
-        moneyWallet.setText(totalMoney + " " + currentWallet.getCurrency());
-        PieChart.Data segment = new PieChart.Data("Argent encore disponible", (totalTransaction * 100) / totalMoney);
-        pieChart.getData().add(segment);
-        moneyLeft = totalMoney - totalTransaction;
-        addTooltipToChartData(segment, String.valueOf(((totalMoney-totalTransaction) * 100) / totalMoney), "Argent encore disponible : " + moneyLeft);
-
-        // Autres configurations
-        pieChart.setLabelsVisible(false);
     }
 
 
@@ -283,7 +291,6 @@ public class HomeController implements Initializable {
     }
 
     @FXML
-
     private void onHandleEpargneButton() {
         showEpargneDialog();
     }
@@ -326,11 +333,11 @@ public class HomeController implements Initializable {
     private void buyCryptoCurrency(CryptoCurrency crypto, User currentUser, Wallet currentWallet) {
         System.out.println(crypto);
         // calcul
-        PurchaseTokenPopup popup = new PurchaseTokenPopup(crypto, currentWallet, currentUser.getId(), transactionData);
+        PurchaseTokenPopup popup = new PurchaseTokenPopup(crypto, currentWallet, moneyLeft, currentUser.getId(), transactionData);
         float result = popup.showAndWait();
 
         System.out.println("Nombre entré: " + result);
-
+        updatePieChart();
         transactionsTableView.refresh();
         // Utilisez 'result' comme nécessaire
 
@@ -342,6 +349,7 @@ public class HomeController implements Initializable {
         moneyWallet.setText(currentWallet.getMoney() + " " + currentWallet.getCurrency());
         descriptionWallet.setText(currentWallet.getDescription());
         updateTableTransaction(wallet);
+        updatePieChart();
     }
 
     private void updateTableTransaction(Wallet wallet) {
@@ -405,8 +413,14 @@ public class HomeController implements Initializable {
         GestionTransaction gestionTransaction = new GestionTransaction();
         gestionWallet.newWallet(wallet, currentUser.getId());
         gestionTransaction.writeTransaction(transaction, wallet.getId(), currentUser.getId());
-        wallet.getTransactions().add(transaction);
-        currentUser.getWallets().add(wallet);
+        currentWallet = wallet;
+        currentWallet.getTransactions().add(transaction);
+        currentUser.getWallets().add(currentWallet);
+        transactionData.clear();
+        transactionData.add(transaction); // Ajouter les transactions à la liste observable
+        transactionsTableView.setItems(transactionData);
+        transactionsTableView.refresh();
+        updatePieChart();
         MenuItem menuItem = new MenuItem(title);
         menuItem.setOnAction(e -> switchWallet(wallet));
         walletsItems.getItems().add(menuItem);

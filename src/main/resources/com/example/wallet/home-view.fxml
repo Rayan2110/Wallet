@@ -61,6 +61,14 @@
                 <Button fx:id="addWallet" onAction="#onAddMoneyButtonClick" style="-fx-background-color: yellow;" text="New Wallet" />
             <Button fx:id="cloneButton" layoutX="326.0" layoutY="31.0" onAction="#onHandleCloneButton" style="-fx-background-color: #800080;" text="Cloner" />
             </HBox>
+            <Label fx:id="moneyLeftLabel" text="moneyLeft" textFill="#484100">
+                <font>
+                    <Font name="Arial Bold" size="20.0" />
+                </font>
+                <VBox.margin>
+                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                </VBox.margin>
+            </Label>
         </VBox>
     </top>
     <center>

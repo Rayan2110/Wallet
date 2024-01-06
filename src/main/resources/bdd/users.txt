@@ -1,2 +1,3 @@
 Id|Mail|Password|Name|Username|BirthDate
 1|r.s@gmail.fr|raph|Smadja|Raphael|04/08/1995
+2|test@test.fr|test|test|test|15/01/1995

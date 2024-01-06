@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 
 
 public class PurchaseTokenPopup {
+    private float moneyLeft;
     private Stage stage;
     private TextField numberField;
     private Label labelToken;
@@ -29,8 +30,9 @@ public class PurchaseTokenPopup {
     private long idUser;
     private ObservableList<Transaction> transactionData;
 
-    public PurchaseTokenPopup(CryptoCurrency crypto, Wallet currentWallet, long idUser, ObservableList<Transaction> transactionData) {
+    public PurchaseTokenPopup(CryptoCurrency crypto, Wallet currentWallet, float moneyLeft, long idUser, ObservableList<Transaction> transactionData) {
         this.idUser = idUser;
+        this.moneyLeft = moneyLeft;
         this.transactionData = transactionData;
         this.crypto = crypto;
         this.currentWallet = currentWallet;
@@ -45,8 +47,8 @@ public class PurchaseTokenPopup {
 
         // Permet seulement les entrées numériques
         numberField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue.matches("\\d*")) {
-                numberField.setText(newValue.replaceAll("[^\\d]", ""));
+            if (!newValue.matches("\\d*(\\.\\d*)?")) {
+                numberField.setText(newValue.replaceAll("[^\\d.]", ""));
             }
         });
 
@@ -64,7 +66,7 @@ public class PurchaseTokenPopup {
         try {
             float investmentAmount = Float.parseFloat(numberField.getText());
 
-            if (investmentAmount <= currentWallet.getMoney()) {
+            if (investmentAmount <= moneyLeft) {
                 this.amount = investmentAmount / crypto.getCurrentPrice();
                 Transaction transaction = new Transaction(TransactionType.PURCHASE_TOKEN.name(), investmentAmount, LocalDateTime.now(), amount, crypto.getSymbol());
                 GestionTransaction gestionTransaction = new GestionTransaction();
