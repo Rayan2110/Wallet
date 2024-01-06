@@ -55,7 +55,7 @@
                 </children>
             </VBox>
             <HBox alignment="CENTER" prefHeight="66.0" prefWidth="766.0" spacing="5">
-                <Button style="-fx-background-color: green;" text="Vendre" />
+                <Button fx:id="sellButton" onAction="#onHandleSellButton" style="-fx-background-color: green;" text="Vendre" />
                 <Button fx:id="dépotButton" onAction="#onHandleDepotButton" style="-fx-background-color: red;" text="Dépot" />
                 <Button onAction="#onHandleEpargneButton" style="-fx-background-color: blue;" text="Epargne" />
                 <Button fx:id="addWallet" onAction="#onAddMoneyButtonClick" style="-fx-background-color: yellow;" text="New Wallet" />
