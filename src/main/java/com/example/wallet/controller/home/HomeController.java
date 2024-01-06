@@ -29,14 +29,10 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class HomeController implements Initializable {
 
@@ -102,6 +98,8 @@ public class HomeController implements Initializable {
     private ObservableList<Transaction> transactionData = FXCollections.observableArrayList();
 
     private Wallet currentWallet;
+
+    private float moneyLeft;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -225,15 +223,13 @@ public class HomeController implements Initializable {
         });
         // Utilise setItems sur l'instance existante
         tableView.setItems(cryptoData);
+        updatePieChart();
+    }
 
+    private void updatePieChart() {
         PieChart.Data emptyData = new PieChart.Data("", 0.001);
 
-        // Ajout de la donnée fictive au PieChart
         pieChart.getData().add(emptyData);
-
-        // Configuration optionnelle pour masquer la légende et les étiquettes
-        pieChart.setLegendVisible(true);
-        pieChart.setLabelsVisible(true);
 
         float totalMoney = 0;
         float totalTransaction = 0;
@@ -265,11 +261,11 @@ public class HomeController implements Initializable {
         moneyWallet.setText(totalMoney + " " + currentWallet.getCurrency());
         PieChart.Data segment = new PieChart.Data("Argent encore disponible", (totalTransaction * 100) / totalMoney);
         pieChart.getData().add(segment);
-        addTooltipToChartData(segment, String.valueOf(((totalMoney-totalTransaction) * 100) / totalMoney), "Argent encore disponible : " + (totalMoney - totalTransaction));
+        moneyLeft = totalMoney - totalTransaction;
+        addTooltipToChartData(segment, String.valueOf(((totalMoney-totalTransaction) * 100) / totalMoney), "Argent encore disponible : " + moneyLeft);
 
         // Autres configurations
         pieChart.setLabelsVisible(false);
-
     }
 
 
@@ -330,26 +326,24 @@ public class HomeController implements Initializable {
             GestionTransaction gestionTransaction = new GestionTransaction();
             gestionTransaction.writeTransaction(transaction, currentWallet.getId(), currentUser.getId());
             currentWallet.getTransactions().add(transaction);
+            updatePieChart();
+            transactionData.clear();
+            List<Transaction> transactions = currentWallet.getTransactions();
+            transactionData.addAll(transactions); // Ajouter les transactions à la liste observable
+            transactionsTableView.setItems(transactionData);
+            transactionsTableView.setItems(transactionData);
             transactionsTableView.refresh();
-
-
     }
 
 
     private void buyCryptoCurrency(CryptoCurrency crypto, User currentUser, Wallet currentWallet) {
         System.out.println(crypto);
         // calcul
-        PurchaseTokenPopup popup = new PurchaseTokenPopup(crypto, currentWallet);
+        PurchaseTokenPopup popup = new PurchaseTokenPopup(crypto, currentWallet, currentUser.getId(), transactionData);
         float result = popup.showAndWait();
 
         System.out.println("Nombre entré: " + result);
 
-        double amount = result / crypto.getCurrentPrice();
-        Transaction transaction = new Transaction(TransactionType.PURCHASE_TOKEN.name(), result, LocalDateTime.now(), amount, crypto.getSymbol());
-        GestionTransaction gestionTransaction = new GestionTransaction();
-        gestionTransaction.writeTransaction(transaction, currentWallet.getId(), currentUser.getId());
-        currentWallet.getTransactions().add(transaction);
-        transactionData.add(transaction);
         transactionsTableView.refresh();
         // Utilisez 'result' comme nécessaire
 
@@ -567,5 +561,113 @@ public class HomeController implements Initializable {
 
         return dialog.showAndWait();
     }
+    public static class Triplet<T, U, V> {
+        private final T first;
+        private final U second;
+        private final V third;
 
+        public Triplet(T first, U second, V third) {
+            this.first = first;
+            this.second = second;
+            this.third = third;
+        }
+
+        public T getFirst() {
+            return first;
+        }
+
+        public U getSecond() {
+            return second;
+        }
+
+        public V getThird() {
+            return third;
+        }
+    }
+
+    public class TransactionData {
+
+        public static Set<String> readTransactions(String fieldName) {
+            Set<String> data = new HashSet<>();
+            try {
+                File file = new File("src/main/resources/bdd/transactions.txt");
+                Scanner scanner = new Scanner(file);
+                while (scanner.hasNextLine()) {
+                    String line = scanner.nextLine();
+                    System.out.println("Ligne lue: " + line);
+                    // Vérifie si la ligne contient "PURCHASE_TOKEN"
+                    if (line.contains("PURCHASE_TOKEN")) {
+                        System.out.println("Ligne correspondante trouvée: " + line); // Pour le débogage
+                    }
+                    String[] parts = line.split("|");// Assurez-vous que ce séparateur correspond à votre fichier
+
+
+                    if ("token".equals(fieldName) && parts.length > 0) {
+                        data.add(parts[0]); // token
+                    } else if ("amount".equals(fieldName) && parts.length > 1) {
+                        data.add(parts[1]); // amount
+                    } else if ("price".equals(fieldName) && parts.length > 2) {
+                        data.add(parts[2]); // price
+                    }
+                }
+                scanner.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            return data;
+        }
+    }
+
+
+    @FXML
+    public Optional<Triplet<String, String, String>> onHandleSellButton(ActionEvent actionEvent) {
+            // Création de la boîte de dialogue
+            Dialog<Triplet<String, String, String>> dialog = new Dialog<>();
+            dialog.setTitle("Détails de la Transaction");
+            dialog.setHeaderText("Sélectionnez les détails de la transaction");
+
+            // Boutons
+            ButtonType btnValider = new ButtonType("Valider", ButtonBar.ButtonData.OK_DONE);
+            dialog.getDialogPane().getButtonTypes().addAll(btnValider, ButtonType.CANCEL);
+
+            // Création des ComboBox
+            ComboBox<String> comboCryptoMonnaie = new ComboBox<>();
+            comboCryptoMonnaie.getItems().addAll(TransactionData.readTransactions("token"));
+
+            ComboBox<String> comboValeurToken = new ComboBox<>();
+            comboValeurToken.getItems().addAll(TransactionData.readTransactions("amount"));
+
+            ComboBox<String> comboValeurEurosDollars = new ComboBox<>();
+            comboValeurEurosDollars.getItems().addAll(TransactionData.readTransactions("price"));
+
+            // Ajout des ComboBox au GridPane
+            GridPane grid = new GridPane();
+            grid.setHgap(10);
+            grid.setVgap(10);
+            grid.setPadding(new Insets(20, 150, 10, 10));
+
+            grid.add(new Label("Crypto-monnaie:"), 0, 0);
+            grid.add(comboCryptoMonnaie, 1, 0);
+            grid.add(new Label("Valeur du token:"), 0, 1);
+            grid.add(comboValeurToken, 1, 1);
+            grid.add(new Label("Valeur en euros/dollars:"), 0, 2);
+            grid.add(comboValeurEurosDollars, 1, 2);
+
+            dialog.getDialogPane().setContent(grid);
+
+            // Convertit le résultat en un triplet lorsque le bouton Valider est cliqué
+            dialog.setResultConverter(dialogButton -> {
+                if (dialogButton == btnValider) {
+                    return new Triplet<>(
+                            comboCryptoMonnaie.getSelectionModel().getSelectedItem(),
+                            comboValeurToken.getSelectionModel().getSelectedItem(),
+                            comboValeurEurosDollars.getSelectionModel().getSelectedItem()
+                    );
+                }
+                return null;
+            });
+
+            // Affiche la boîte de dialogue et attend une réponse
+            return dialog.showAndWait();
+        }
 }

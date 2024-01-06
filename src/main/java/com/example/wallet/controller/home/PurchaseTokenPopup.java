@@ -1,7 +1,11 @@
 package com.example.wallet.controller.home;
 
+import com.example.wallet.controller.GestionTransaction;
+import com.example.wallet.controller.TransactionType;
 import com.example.wallet.entity.CryptoCurrency;
+import com.example.wallet.entity.Transaction;
 import com.example.wallet.entity.Wallet;
+import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -9,6 +13,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+
+import java.time.LocalDateTime;
+
 
 public class PurchaseTokenPopup {
     private Stage stage;
@@ -18,9 +25,13 @@ public class PurchaseTokenPopup {
     private float result;
     private Wallet currentWallet;
     private CryptoCurrency crypto;
+    private double amount;
+    private long idUser;
+    private ObservableList<Transaction> transactionData;
 
-
-    public PurchaseTokenPopup(CryptoCurrency crypto, Wallet currentWallet) {
+    public PurchaseTokenPopup(CryptoCurrency crypto, Wallet currentWallet, long idUser, ObservableList<Transaction> transactionData) {
+        this.idUser = idUser;
+        this.transactionData = transactionData;
         this.crypto = crypto;
         this.currentWallet = currentWallet;
         stage = new Stage();
@@ -54,7 +65,12 @@ public class PurchaseTokenPopup {
             float investmentAmount = Float.parseFloat(numberField.getText());
 
             if (investmentAmount <= currentWallet.getMoney()) {
-                result = investmentAmount;
+                this.amount = investmentAmount / crypto.getCurrentPrice();
+                Transaction transaction = new Transaction(TransactionType.PURCHASE_TOKEN.name(), investmentAmount, LocalDateTime.now(), amount, crypto.getSymbol());
+                GestionTransaction gestionTransaction = new GestionTransaction();
+                gestionTransaction.writeTransaction(transaction, currentWallet.getId(), idUser);
+                currentWallet.getTransactions().add(transaction);
+                transactionData.add(transaction);
                 stage.close();
             } else {
                 numberField.setText("");
