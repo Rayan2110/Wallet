@@ -29,6 +29,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDateTime;
@@ -319,7 +321,18 @@ public class HomeController implements Initializable {
         result.ifPresent(montant -> {
             System.out.println("Montant épargné: " + montant);
             // Ajoutez ici le code pour gérer l'épargne
+            saveToTransactionFile(montant);
         });
+
+    }
+    private void saveToTransactionFile(String montant) {
+            Transaction transaction = new Transaction(TransactionType.SAVING_MONEY.name(), Float.parseFloat(montant), LocalDateTime.now(), 0, null);
+            GestionTransaction gestionTransaction = new GestionTransaction();
+            gestionTransaction.writeTransaction(transaction, currentWallet.getId(), currentUser.getId());
+            currentWallet.getTransactions().add(transaction);
+            transactionsTableView.refresh();
+
+
     }
 
 
