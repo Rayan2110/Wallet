@@ -3,3 +3,5 @@ IdWallet|Title|Description|Money|DateOfCreation|Currency|IdUser
 2|test#2|tellepple|2000.0|2024-01-06T12:35:06.263646|EUR|2
 3|test#3|dzdzdzz|10000.0|2024-01-06T12:37:13.820070700|EUR|2
 5|test#4|delfeokeflefl|10000.0|2024-01-06T12:37:52.554374900|EUR|2
+5|test#1|test claal|5000.0|2024-01-07T20:43:16.303305|EUR|2
+6|test10|dedefger|5000.0|2024-01-07T20:43:16.354967600|EUR|2

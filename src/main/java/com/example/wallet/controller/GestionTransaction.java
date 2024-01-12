@@ -3,11 +3,13 @@ package com.example.wallet.controller;
 import com.example.wallet.entity.Transaction;
 import com.example.wallet.entity.User;
 import com.example.wallet.entity.Wallet;
+import javafx.collections.ObservableList;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Scanner;
 
 public class GestionTransaction {
 
@@ -22,6 +24,13 @@ public class GestionTransaction {
             e.printStackTrace();
         }
     }
+    public void displayTransactions(TransactionType transactionType, float price, double amount, String token, Wallet currentWallet, long idUser, ObservableList<Transaction> transactionData) {
+        Transaction transaction = new Transaction(TransactionType.PURCHASE_TOKEN.name(), price, LocalDateTime.now(), amount, token);
+        GestionTransaction gestionTransaction = new GestionTransaction();
+        gestionTransaction.writeTransaction(transaction, currentWallet.getId(), idUser);
+        currentWallet.getTransactions().add(transaction);
+        transactionData.add(transaction);
+    }
 
     private long nbTransaction() {
         long lineCount = 0;
@@ -34,6 +43,7 @@ public class GestionTransaction {
         }
         return lineCount;
     }
+
 
     // Méthode pour filtrer les transactions par identifiant de portefeuille
 

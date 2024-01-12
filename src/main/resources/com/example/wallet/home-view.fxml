@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane prefHeight="1024.0" prefWidth="768.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.wallet.controller.home.HomeController">
+<BorderPane prefHeight="1024.0" prefWidth="768.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.wallet.controller.home.HomeController">
     <top>
         <VBox alignment="CENTER" spacing="5">
             <MenuBar>
@@ -63,10 +63,10 @@
             </HBox>
             <Label fx:id="moneyLeftLabel" text="moneyLeft" textFill="#484100">
                 <font>
-                    <Font name="Arial Bold" size="20.0" />
+                    <Font name="Arial Bold" size="15.0" />
                 </font>
                 <VBox.margin>
-                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                    <Insets bottom="10.0" />
                 </VBox.margin>
             </Label>
         </VBox>

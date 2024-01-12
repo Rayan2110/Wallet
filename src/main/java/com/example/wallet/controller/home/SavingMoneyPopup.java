@@ -2,7 +2,6 @@ package com.example.wallet.controller.home;
 
 import com.example.wallet.controller.GestionTransaction;
 import com.example.wallet.controller.TransactionType;
-import com.example.wallet.entity.CryptoCurrency;
 import com.example.wallet.entity.Transaction;
 import com.example.wallet.entity.Wallet;
 import javafx.collections.ObservableList;
@@ -16,32 +15,26 @@ import javafx.stage.Stage;
 
 import java.time.LocalDateTime;
 
-
-public class PurchaseTokenPopup {
-    private float moneyLeft;
-    private Stage stage;
-    private TextField numberField;
-    private Label labelToken;
+public class SavingMoneyPopup {
+    Wallet currentWallet;
     private float result;
-    private Wallet currentWallet;
-    private CryptoCurrency crypto;
-    private double amount;
-    private long idUser;
-    private ObservableList<Transaction> transactionData;
+    private TextField numberField;
+    float moneyLeft;
+    long currentIdUser;
+    private Stage stage;
+    ObservableList<Transaction> transactionData;
 
-    public PurchaseTokenPopup(CryptoCurrency crypto, Wallet currentWallet, float moneyLeft, long idUser, ObservableList<Transaction> transactionData) {
-        this.idUser = idUser;
-        this.moneyLeft = moneyLeft;
-        this.transactionData = transactionData;
-        this.crypto = crypto;
+    public SavingMoneyPopup(Wallet currentWallet, float moneyLeft, long currentIdUser, ObservableList<Transaction> transactionData) {
         this.currentWallet = currentWallet;
+        this.moneyLeft = moneyLeft;
+        this.currentIdUser = currentIdUser;
+        this.transactionData = transactionData;
         stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
-        stage.setTitle("Buy token " + crypto.getName());
 
-        labelToken = new Label("Token : " + crypto.getSymbol() + " Prix : " + crypto.getCurrentPrice());
+        Label labelSaving = new Label("You have in your account : " + moneyLeft + " how much do you want to save ?");
         numberField = new TextField();
-        numberField.setPromptText("Combien voulez-vous investir");
+        numberField.setPromptText("100");
 
         // Permet seulement les entrées numériques
         numberField.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -50,11 +43,11 @@ public class PurchaseTokenPopup {
             }
         });
 
-        Button submitButton = new Button("Soumettre");
+        Button submitButton = new Button("Submit");
         submitButton.setOnAction(e -> handleSubmit());
 
         VBox layout = new VBox(10);
-        layout.getChildren().addAll(numberField, submitButton);
+        layout.getChildren().addAll(labelSaving, numberField, submitButton);
 
         Scene scene = new Scene(layout, 300, 150);
         stage.setScene(scene);
@@ -62,13 +55,12 @@ public class PurchaseTokenPopup {
 
     private void handleSubmit() {
         try {
-            float investmentAmount = Float.parseFloat(numberField.getText());
+            float savingAmount = Float.parseFloat(numberField.getText());
 
-            if (investmentAmount <= moneyLeft) {
-                this.amount = investmentAmount / crypto.getCurrentPrice();
-                Transaction transaction = new Transaction(TransactionType.PURCHASE_TOKEN.name(), investmentAmount, LocalDateTime.now(), amount, crypto.getSymbol());
+            if (savingAmount <= moneyLeft) {
+                Transaction transaction = new Transaction(TransactionType.SAVING_MONEY.name(), savingAmount, LocalDateTime.now(), 0, null);
                 GestionTransaction gestionTransaction = new GestionTransaction();
-                gestionTransaction.writeTransaction(transaction, currentWallet.getId(), idUser);
+                gestionTransaction.writeTransaction(transaction, currentWallet.getId(), currentIdUser);
                 currentWallet.getTransactions().add(transaction);
                 transactionData.add(transaction);
                 stage.close();
@@ -86,4 +78,6 @@ public class PurchaseTokenPopup {
         stage.showAndWait();
         return result;
     }
+
+
 }
