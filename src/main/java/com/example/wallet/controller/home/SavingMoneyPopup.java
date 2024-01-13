@@ -58,7 +58,7 @@ public class SavingMoneyPopup {
             float savingAmount = Float.parseFloat(numberField.getText());
 
             if (savingAmount <= moneyLeft) {
-                Transaction transaction = new Transaction(TransactionType.SAVING_MONEY.name(), savingAmount, LocalDateTime.now(), 0, null);
+                Transaction transaction = new Transaction(TransactionType.SAVING_MONEY.name(), savingAmount, currentWallet.getCurrency(), LocalDateTime.now(), 0, null);
                 GestionTransaction gestionTransaction = new GestionTransaction();
                 gestionTransaction.writeTransaction(transaction, currentWallet.getId(), currentIdUser);
                 currentWallet.getTransactions().add(transaction);

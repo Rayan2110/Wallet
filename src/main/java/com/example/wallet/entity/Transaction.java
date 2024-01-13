@@ -8,7 +8,10 @@ public class Transaction {
 
     private String transactionType; //Achat ou vente
 
+
     private float price; // prix en euros, dollars
+
+    private String currency;
 
     private LocalDateTime date;
 
@@ -16,18 +19,20 @@ public class Transaction {
 
     private String token;
 
-    public Transaction(long id, String transactionType, float price, LocalDateTime date, float amount, String token) {
+    public Transaction(long id, String transactionType, float price, String currency, LocalDateTime date, float amount, String token) {
         this.id = id;
         this.transactionType = transactionType;
         this.price = price;
+        this.currency = currency;
         this.date = date;
         this.amount = amount;
         this.token = token;
     }
 
-    public Transaction(String transactionType, float price, LocalDateTime date, double amount, String token) {
+    public Transaction(String transactionType, float price, String currency, LocalDateTime date, double amount, String token) {
         this.transactionType = transactionType;
         this.price = price;
+        this.currency = currency;
         this.date = date;
         this.amount = amount;
         this.token = token;
@@ -55,6 +60,18 @@ public class Transaction {
 
     public void setPrice(float price) {
         this.price = price;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
     }
 
     public LocalDateTime getDate() {

@@ -45,7 +45,7 @@ public class SellingTokenPopup {
 
         grid.add(new Label("Choose the token you want to sell : "), 0, 0);
         grid.add(comboCryptoMonnaie, 1, 0);
-        grid.add(new Label("Valeur du token:"), 0, 1);
+        grid.add(new Label("Current Value of Tokens : " ), 0, 1);
 
         Scene scene = new Scene(grid, 512, 384);
         stage.setScene(scene);

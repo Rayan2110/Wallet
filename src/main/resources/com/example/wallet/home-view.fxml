@@ -23,6 +23,7 @@
                             <MenuItem mnemonicParsing="false" text="About" />
                         </items>
                     </Menu>
+                    <Menu mnemonicParsing="false" text="Switch Currency" onAction="#onHandleSwitchCurrency"/>
                 </menus>
             </MenuBar>
             <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
@@ -127,9 +128,10 @@
               <columns>
                 <TableColumn fx:id="typeField" prefWidth="204" text="Type" />
                 <TableColumn fx:id="priceField" prefWidth="204" text="Price" />
-                  <TableColumn fx:id="dateField" prefWidth="204" text="Date" />
+                <TableColumn fx:id="currentField" prefWidth="204" text="Current" />
                   <TableColumn fx:id="amountField" prefWidth="204" text="Amount" />
                   <TableColumn fx:id="tokenField" prefWidth="205" text="Token" />
+                  <TableColumn fx:id="dateField" prefWidth="204" text="Date" />
               </columns>
             </TableView>
     </bottom>

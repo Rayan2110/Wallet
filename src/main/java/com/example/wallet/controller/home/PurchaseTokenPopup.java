@@ -66,7 +66,7 @@ public class PurchaseTokenPopup {
 
             if (investmentAmount <= moneyLeft) {
                 this.amount = investmentAmount / crypto.getCurrentPrice();
-                Transaction transaction = new Transaction(TransactionType.PURCHASE_TOKEN.name(), investmentAmount, LocalDateTime.now(), amount, crypto.getSymbol());
+                Transaction transaction = new Transaction(TransactionType.PURCHASE_TOKEN.name(), investmentAmount, currentWallet.getCurrency(), LocalDateTime.now(), amount, crypto.getSymbol());
                 GestionTransaction gestionTransaction = new GestionTransaction();
                 gestionTransaction.writeTransaction(transaction, currentWallet.getId(), idUser);
                 currentWallet.getTransactions().add(transaction);
