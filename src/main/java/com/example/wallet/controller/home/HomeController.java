@@ -29,7 +29,9 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -150,14 +152,8 @@ public class HomeController implements Initializable {
         ObservableList<CryptoCurrency> cryptoData = FXCollections.observableArrayList();
         cryptoData.addAll(cryptoDataApi);
 
-        // Currency Column with a dropdown button
         TableColumn<CryptoCurrency, String> currencyCol = new TableColumn<>("Currency");
-        // Implement a custom cell factory with a dropdown button for currency selection
-        // Last 7 Days Column
         TableColumn<CryptoCurrency, String> last7DaysCol = new TableColumn<>("Last 7 Days");
-        //last7DaysCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getSparklineIn7d()));
-
-        // 24h Volume Column
         TableColumn<CryptoCurrency, Long> volume24hCol = new TableColumn<>("24h Volume");
         volume24hCol.setCellValueFactory(data -> new SimpleLongProperty(data.getValue().getTotalVolume()).asObject());
 
@@ -189,7 +185,7 @@ public class HomeController implements Initializable {
         marketCapCol.setCellValueFactory(data -> new SimpleLongProperty(data.getValue().getMarketCap()).asObject());
         last7dCol.setCellValueFactory(new PropertyValueFactory<>("sparklineIn7d"));
         actionCol.setCellFactory(col -> {
-            Button buyButton = new Button("Acheter");
+            Button buyButton = new Button("Buy");
             TableCell<CryptoCurrency, Void> cell = new TableCell<>() {
                 @Override
                 protected void updateItem(Void item, boolean empty) {
@@ -200,7 +196,6 @@ public class HomeController implements Initializable {
                         setGraphic(buyButton);
                         buyButton.setOnAction(event -> {
                             CryptoCurrency crypto = getTableView().getItems().get(getIndex());
-                            // Mettez ici la logique pour traiter l'achat
                             buyCryptoCurrency(crypto, currentUser, currentWallet);
                         });
                     }
@@ -208,8 +203,6 @@ public class HomeController implements Initializable {
             };
             return cell;
         });
-
-        // Custom cell factory to display the LineChart in the cell
 
         last7dCol.setCellFactory(column -> new TableCell<>() {
             @Override
@@ -226,10 +219,10 @@ public class HomeController implements Initializable {
         });
         // Utilise setItems sur l'instance existante
         tableView.setItems(cryptoData);
-        updatePieChart();
+        updateHeader();
     }
 
-    private void updatePieChart() {
+    private void updateHeader() {
         if (currentWallet != null) {
             PieChart.Data emptyData = new PieChart.Data("", 0.001);
             pieChart.getData().clear();
@@ -262,17 +255,16 @@ public class HomeController implements Initializable {
                     PieChart.Data segment = new PieChart.Data(transaction.getToken(), (transaction.getPrice() * 100) / totalMoney);
                     totalTransaction += transaction.getPrice();
                     pieChart.getData().add(segment);
-                    addTooltipToChartData(segment, title, "Épargne : " + transaction.getPrice());
+                    addTooltipToChartData(segment, title, "Saving : " + transaction.getPrice());
                 }
             }
             moneyWallet.setText(totalMoney + " " + currentWallet.getCurrency());
             moneyLeft = totalMoney - totalTransaction;
-            PieChart.Data segment = new PieChart.Data("Argent encore disponible", moneyLeft * 100 / totalMoney);
+            PieChart.Data segment = new PieChart.Data("Money still available : ", moneyLeft * 100 / totalMoney);
             pieChart.getData().add(segment);
-            addTooltipToChartData(segment, String.valueOf(((totalMoney - totalTransaction) * 100) / totalMoney), "Argent encore disponible : " + moneyLeft);
-
-            // Autres configurations
+            addTooltipToChartData(segment, String.valueOf(((totalMoney - totalTransaction) * 100) / totalMoney), "Money still available : " + moneyLeft);
             pieChart.setLabelsVisible(false);
+            moneyLeftLabel.setText("Money Left : " + moneyLeft);
         }
     }
 
@@ -290,70 +282,28 @@ public class HomeController implements Initializable {
 
     @FXML
     private void onHandleEpargneButton() {
-        showEpargneDialog();
+        SavingMoneyPopup popup = new SavingMoneyPopup(currentWallet, moneyLeft, currentUser.getId(),transactionData);
+        float result = popup.showAndWait();
+
+        updateHeader();
+        transactionsTableView.refresh();
     }
 
-    private void showEpargneDialog() {
-        // Créer un nouveau dialogue
-        Dialog<String> dialog = new Dialog<>();
-        dialog.setTitle("Épargne");
-        dialog.setHeaderText("Entrez le montant à épargner");
-
-        // Ajouter un bouton de type OK et Cancel
-        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
-
-        // Créer un champ de texte pour l'entrée
-        TextField inputField = new TextField();
-        inputField.setPromptText("Montant");
-
-        // Ajouter le champ de texte au dialogue
-        dialog.getDialogPane().setContent(inputField);
-
-        // Convertir le résultat en une chaîne lors de l'appui sur OK
-        dialog.setResultConverter(dialogButton -> {
-            if (dialogButton == ButtonType.OK) {
-                return inputField.getText();
-            }
-            return null;
-        });
-
-        // Afficher le dialogue et attendre la réponse de l'utilisateur
-        Optional<String> result = dialog.showAndWait();
-
-        // Traiter la réponse
-        result.ifPresent(montant -> {
-            System.out.println("Montant épargné: " + montant);
-            // Ajoutez ici le code pour gérer l'épargne
-            saveToTransactionFile(montant);
-        });
-
-    }
     private void saveToTransactionFile(String montant) {
-            Transaction transaction = new Transaction(TransactionType.SAVING_MONEY.name(), Float.parseFloat(montant), LocalDateTime.now(), 0, null);
-            GestionTransaction gestionTransaction = new GestionTransaction();
-            gestionTransaction.writeTransaction(transaction, currentWallet.getId(), currentUser.getId());
-            currentWallet.getTransactions().add(transaction);
-            updatePieChart();
-            transactionData.clear();
-            List<Transaction> transactions = currentWallet.getTransactions();
-            transactionData.addAll(transactions); // Ajouter les transactions à la liste observable
-            transactionsTableView.setItems(transactionData);
-            transactionsTableView.setItems(transactionData);
-            transactionsTableView.refresh();
+        Transaction transaction = new Transaction(TransactionType.SAVING_MONEY.name(), Float.parseFloat(montant), LocalDateTime.now(), 0, null);
+        GestionTransaction gestionTransaction = new GestionTransaction();
+        gestionTransaction.writeTransaction(transaction, currentWallet.getId(), currentUser.getId());
+        currentWallet.getTransactions().add(transaction);
+        updateHeader();
+        transactionsTableView.refresh();
     }
-
 
     private void buyCryptoCurrency(CryptoCurrency crypto, User currentUser, Wallet currentWallet) {
-        System.out.println(crypto);
-        // calcul
         PurchaseTokenPopup popup = new PurchaseTokenPopup(crypto, currentWallet, moneyLeft, currentUser.getId(), transactionData);
         float result = popup.showAndWait();
 
-        System.out.println("Nombre entré: " + result);
-        updatePieChart();
+        updateHeader();
         transactionsTableView.refresh();
-        // Utilisez 'result' comme nécessaire
-
     }
 
     private void switchWallet(Wallet wallet) {
@@ -361,18 +311,15 @@ public class HomeController implements Initializable {
         titleWallet.setText(currentWallet.getTitle());
         moneyWallet.setText(currentWallet.getMoney() + " " + currentWallet.getCurrency());
         descriptionWallet.setText(currentWallet.getDescription());
-        updateTableTransaction(wallet);
-        updatePieChart();
+        updateTableTransactions(currentWallet);
+        updateHeader();
     }
 
-    private void updateTableTransaction(Wallet wallet) {
+    private void updateTableTransactions(Wallet wallet) {
         transactionData.clear();
         List<Transaction> transactions = wallet.getTransactions();
         transactionData.addAll(transactions);
         transactionsTableView.setItems(transactionData);
-
-        transactionsTableView.setItems(transactionData);
-
         transactionsTableView.refresh();
     }
 
@@ -380,7 +327,7 @@ public class HomeController implements Initializable {
     protected void onAddMoneyButtonClick() throws IOException {
         Stage popupWindow = new Stage();
         popupWindow.initModality(Modality.APPLICATION_MODAL);
-        popupWindow.setTitle("Formulaire");
+        popupWindow.setTitle("New wallet");
 
         // Création des éléments du formulaire
         Label labelWalletTitle = new Label("Entrez le nom de votre porte-monnaie");
@@ -433,7 +380,7 @@ public class HomeController implements Initializable {
         transactionData.add(transaction); // Ajouter les transactions à la liste observable
         transactionsTableView.setItems(transactionData);
         transactionsTableView.refresh();
-        updatePieChart();
+        updateHeader();
         MenuItem menuItem = new MenuItem(title);
         menuItem.setOnAction(e -> switchWallet(wallet));
         walletsItems.getItems().add(menuItem);
@@ -491,7 +438,6 @@ public class HomeController implements Initializable {
         } else {
             return Optional.empty();
         }
-
     }
 
     @FXML
@@ -506,8 +452,8 @@ public class HomeController implements Initializable {
             transactionsTableView.refresh();
             currentWallet.setMoney(currentWallet.getMoney() + montant);
             moneyWallet.setText(currentWallet.getMoney() + " " + currentWallet.getCurrency());
+            updateHeader();
         });
-
     }
 
     public void onHandleCloneButton(ActionEvent actionEvent) {
@@ -535,7 +481,6 @@ public class HomeController implements Initializable {
             walletsItems.getItems().add(menuItem);
         });
     }
-
 
     private Optional<Pair<String, String>> afficherDialogueClonage() {
         // Création de la boîte de dialogue
@@ -575,6 +520,7 @@ public class HomeController implements Initializable {
 
         return dialog.showAndWait();
     }
+
     public static class Triplet<T, U, V> {
         private final T first;
         private final U second;
@@ -635,53 +581,53 @@ public class HomeController implements Initializable {
 
     @FXML
     public Optional<Triplet<String, String, String>> onHandleSellButton(ActionEvent actionEvent) {
-            // Création de la boîte de dialogue
-            Dialog<Triplet<String, String, String>> dialog = new Dialog<>();
-            dialog.setTitle("Détails de la Transaction");
-            dialog.setHeaderText("Sélectionnez les détails de la transaction");
+        // Création de la boîte de dialogue
+        Dialog<Triplet<String, String, String>> dialog = new Dialog<>();
+        dialog.setTitle("Détails de la Transaction");
+        dialog.setHeaderText("Sélectionnez les détails de la transaction");
 
-            // Boutons
-            ButtonType btnValider = new ButtonType("Valider", ButtonBar.ButtonData.OK_DONE);
-            dialog.getDialogPane().getButtonTypes().addAll(btnValider, ButtonType.CANCEL);
+        // Boutons
+        ButtonType btnValider = new ButtonType("Valider", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(btnValider, ButtonType.CANCEL);
 
-            // Création des ComboBox
-            ComboBox<String> comboCryptoMonnaie = new ComboBox<>();
-            comboCryptoMonnaie.getItems().addAll(TransactionData.readTransactions("token"));
+        // Création des ComboBox
+        ComboBox<String> comboCryptoMonnaie = new ComboBox<>();
+        comboCryptoMonnaie.getItems().addAll(TransactionData.readTransactions("token"));
 
-            ComboBox<String> comboValeurToken = new ComboBox<>();
-            comboValeurToken.getItems().addAll(TransactionData.readTransactions("amount"));
+        ComboBox<String> comboValeurToken = new ComboBox<>();
+        comboValeurToken.getItems().addAll(TransactionData.readTransactions("amount"));
 
-            ComboBox<String> comboValeurEurosDollars = new ComboBox<>();
-            comboValeurEurosDollars.getItems().addAll(TransactionData.readTransactions("price"));
+        ComboBox<String> comboValeurEurosDollars = new ComboBox<>();
+        comboValeurEurosDollars.getItems().addAll(TransactionData.readTransactions("price"));
 
-            // Ajout des ComboBox au GridPane
-            GridPane grid = new GridPane();
-            grid.setHgap(10);
-            grid.setVgap(10);
-            grid.setPadding(new Insets(20, 150, 10, 10));
+        // Ajout des ComboBox au GridPane
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
 
-            grid.add(new Label("Crypto-monnaie:"), 0, 0);
-            grid.add(comboCryptoMonnaie, 1, 0);
-            grid.add(new Label("Valeur du token:"), 0, 1);
-            grid.add(comboValeurToken, 1, 1);
-            grid.add(new Label("Valeur en euros/dollars:"), 0, 2);
-            grid.add(comboValeurEurosDollars, 1, 2);
+        grid.add(new Label("Crypto-monnaie:"), 0, 0);
+        grid.add(comboCryptoMonnaie, 1, 0);
+        grid.add(new Label("Valeur du token:"), 0, 1);
+        grid.add(comboValeurToken, 1, 1);
+        grid.add(new Label("Valeur en euros/dollars:"), 0, 2);
+        grid.add(comboValeurEurosDollars, 1, 2);
 
-            dialog.getDialogPane().setContent(grid);
+        dialog.getDialogPane().setContent(grid);
 
-            // Convertit le résultat en un triplet lorsque le bouton Valider est cliqué
-            dialog.setResultConverter(dialogButton -> {
-                if (dialogButton == btnValider) {
-                    return new Triplet<>(
-                            comboCryptoMonnaie.getSelectionModel().getSelectedItem(),
-                            comboValeurToken.getSelectionModel().getSelectedItem(),
-                            comboValeurEurosDollars.getSelectionModel().getSelectedItem()
-                    );
-                }
-                return null;
-            });
+        // Convertit le résultat en un triplet lorsque le bouton Valider est cliqué
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == btnValider) {
+                return new Triplet<>(
+                        comboCryptoMonnaie.getSelectionModel().getSelectedItem(),
+                        comboValeurToken.getSelectionModel().getSelectedItem(),
+                        comboValeurEurosDollars.getSelectionModel().getSelectedItem()
+                );
+            }
+            return null;
+        });
 
-            // Affiche la boîte de dialogue et attend une réponse
-            return dialog.showAndWait();
-        }
+        // Affiche la boîte de dialogue et attend une réponse
+        return dialog.showAndWait();
+    }
 }
