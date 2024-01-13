@@ -80,4 +80,5 @@ public class Transaction {
     public void setToken(String token) {
         this.token = token;
     }
+
 }

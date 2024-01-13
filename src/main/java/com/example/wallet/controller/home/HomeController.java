@@ -456,7 +456,7 @@ public class HomeController implements Initializable {
         });
     }
 
-    public void onHandleCloneButton(ActionEvent actionEvent) {
+    /*public void onHandleCloneButton(ActionEvent actionEvent) {
         Optional<Pair<String, String>> result = afficherDialogueClonage();
 
         result.ifPresent(titreDescription -> {
@@ -478,6 +478,22 @@ public class HomeController implements Initializable {
 
             MenuItem menuItem = new MenuItem(nouveauTitre);
             menuItem.setOnAction(e -> switchWallet(wallet));
+            walletsItems.getItems().add(menuItem);
+        });
+    }*/
+    public void onHandleCloneButton(ActionEvent actionEvent) {
+        Optional<Pair<String, String>> result = afficherDialogueClonage();
+
+        result.ifPresent(titreDescription -> {
+            String nouveauTitre = titreDescription.getKey();
+            String nouvelleDescription = titreDescription.getValue();
+
+            Wallet cloneWallet = new Wallet(nouveauTitre, nouvelleDescription, currentWallet.getMoney(), LocalDateTime.now(), currentWallet.getCurrency());
+            GestionWallet gestionWallet = new GestionWallet();
+            gestionWallet.cloneWallet(currentWallet, cloneWallet, currentUser.getId());
+
+            MenuItem menuItem = new MenuItem(nouveauTitre);
+            menuItem.setOnAction(e -> switchWallet(cloneWallet));
             walletsItems.getItems().add(menuItem);
         });
     }
