@@ -282,7 +282,7 @@ public class HomeController implements Initializable {
 
     @FXML
     private void onHandleEpargneButton() {
-        SavingMoneyPopup popup = new SavingMoneyPopup(currentWallet, moneyLeft, currentUser.getId(),transactionData);
+        SavingMoneyPopup popup = new SavingMoneyPopup(currentWallet, moneyLeft, currentUser.getId(), transactionData);
         float result = popup.showAndWait();
 
         updateHeader();
@@ -521,113 +521,12 @@ public class HomeController implements Initializable {
         return dialog.showAndWait();
     }
 
-    public static class Triplet<T, U, V> {
-        private final T first;
-        private final U second;
-        private final V third;
-
-        public Triplet(T first, U second, V third) {
-            this.first = first;
-            this.second = second;
-            this.third = third;
-        }
-
-        public T getFirst() {
-            return first;
-        }
-
-        public U getSecond() {
-            return second;
-        }
-
-        public V getThird() {
-            return third;
-        }
-    }
-
-    public class TransactionData {
-
-        public static Set<String> readTransactions(String fieldName) {
-            Set<String> data = new HashSet<>();
-            try {
-                File file = new File("src/main/resources/bdd/transactions.txt");
-                Scanner scanner = new Scanner(file);
-                while (scanner.hasNextLine()) {
-                    String line = scanner.nextLine();
-                    System.out.println("Ligne lue: " + line);
-                    // Vérifie si la ligne contient "PURCHASE_TOKEN"
-                    if (line.contains("PURCHASE_TOKEN")) {
-                        System.out.println("Ligne correspondante trouvée: " + line); // Pour le débogage
-                    }
-                    String[] parts = line.split("|");// Assurez-vous que ce séparateur correspond à votre fichier
-
-
-                    if ("token".equals(fieldName) && parts.length > 0) {
-                        data.add(parts[0]); // token
-                    } else if ("amount".equals(fieldName) && parts.length > 1) {
-                        data.add(parts[1]); // amount
-                    } else if ("price".equals(fieldName) && parts.length > 2) {
-                        data.add(parts[2]); // price
-                    }
-                }
-                scanner.close();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-            return data;
-        }
-    }
-
-
     @FXML
-    public Optional<Triplet<String, String, String>> onHandleSellButton(ActionEvent actionEvent) {
-        // Création de la boîte de dialogue
-        Dialog<Triplet<String, String, String>> dialog = new Dialog<>();
-        dialog.setTitle("Détails de la Transaction");
-        dialog.setHeaderText("Sélectionnez les détails de la transaction");
+    public void onHandleSellButton(ActionEvent actionEvent) {
+        SellingTokenPopup popup = new SellingTokenPopup(currentWallet, moneyLeft, currentUser.getId(), transactionData);
+        float result = popup.showAndWait();
 
-        // Boutons
-        ButtonType btnValider = new ButtonType("Valider", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(btnValider, ButtonType.CANCEL);
-
-        // Création des ComboBox
-        ComboBox<String> comboCryptoMonnaie = new ComboBox<>();
-        comboCryptoMonnaie.getItems().addAll(TransactionData.readTransactions("token"));
-
-        ComboBox<String> comboValeurToken = new ComboBox<>();
-        comboValeurToken.getItems().addAll(TransactionData.readTransactions("amount"));
-
-        ComboBox<String> comboValeurEurosDollars = new ComboBox<>();
-        comboValeurEurosDollars.getItems().addAll(TransactionData.readTransactions("price"));
-
-        // Ajout des ComboBox au GridPane
-        GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(20, 150, 10, 10));
-
-        grid.add(new Label("Crypto-monnaie:"), 0, 0);
-        grid.add(comboCryptoMonnaie, 1, 0);
-        grid.add(new Label("Valeur du token:"), 0, 1);
-        grid.add(comboValeurToken, 1, 1);
-        grid.add(new Label("Valeur en euros/dollars:"), 0, 2);
-        grid.add(comboValeurEurosDollars, 1, 2);
-
-        dialog.getDialogPane().setContent(grid);
-
-        // Convertit le résultat en un triplet lorsque le bouton Valider est cliqué
-        dialog.setResultConverter(dialogButton -> {
-            if (dialogButton == btnValider) {
-                return new Triplet<>(
-                        comboCryptoMonnaie.getSelectionModel().getSelectedItem(),
-                        comboValeurToken.getSelectionModel().getSelectedItem(),
-                        comboValeurEurosDollars.getSelectionModel().getSelectedItem()
-                );
-            }
-            return null;
-        });
-
-        // Affiche la boîte de dialogue et attend une réponse
-        return dialog.showAndWait();
+        updateHeader();
+        transactionsTableView.refresh();
     }
 }

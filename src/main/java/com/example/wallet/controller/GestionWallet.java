@@ -25,6 +25,22 @@ public class GestionWallet {
         }
     }
 
+    public void cloneWallet(Wallet currentWallet, long idUser) {
+        Wallet cloneWallet = currentWallet;
+        cloneWallet.setId(cloneWallet.getId() + 1);
+        cloneWallet.setTitle(currentWallet.getTitle() + " clone");
+        cloneWallet.setDescription(currentWallet.getTitle() + " clone");
+        cloneWallet.getTransactions().clear();
+
+        for (Transaction transaction : currentWallet.getTransactions()) {
+            Transaction transactionClone = transaction;
+            GestionTransaction gestionTransaction = new GestionTransaction();
+            gestionTransaction.writeTransaction(transactionClone, cloneWallet.getId(), idUser);
+            cloneWallet.getTransactions().add(transactionClone);
+        }
+
+    }
+
     private int nbWallet() {
         int lineCount = 0;
         try (BufferedReader reader = new BufferedReader(new FileReader(cheminFichier))) {
