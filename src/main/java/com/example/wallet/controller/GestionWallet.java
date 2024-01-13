@@ -11,6 +11,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.wallet.controller.TransactionType.CLONE_WALLET;
+
 public class GestionWallet {
     private String cheminFichier = "src/main/resources/bdd/wallets.txt"; // Remplacez par le chemin de votre fichier
     private Wallet currentWallet;
@@ -63,5 +65,19 @@ public class GestionWallet {
         }
         return null;
     }
+    public void cloneWallet(Wallet currentWallet, Wallet cloneWallet, long idUser) {
+        GestionTransaction gestionTransaction = new GestionTransaction();
+        GestionWallet gestionWallet = new GestionWallet();
 
+        gestionWallet.newWallet(cloneWallet, idUser);
+
+        Transaction transactionClone = new Transaction(CLONE_WALLET.name(),currentWallet.getMoney(), LocalDateTime.now(), 0, null);
+        gestionTransaction.writeTransaction(transactionClone, cloneWallet.getId(), idUser);
+        cloneWallet.getTransactions().add(transactionClone);
+        for (Transaction transaction : currentWallet.getTransactions()) {
+            transactionClone = transaction;
+            gestionTransaction.writeTransaction(transactionClone, cloneWallet.getId(), idUser);
+            cloneWallet.getTransactions().add(transactionClone);
+        }
+    }
 }
