@@ -30,8 +30,11 @@ import javafx.stage.Stage;
 import javafx.util.Pair;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URL;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -105,7 +108,7 @@ public class HomeController implements Initializable {
 
     private Wallet currentWallet;
 
-    private float moneyLeft;
+    private BigDecimal moneyLeft;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -184,7 +187,7 @@ public class HomeController implements Initializable {
 
         nameCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getName()));
         symbolCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getSymbol()));
-        priceCol.setCellValueFactory(data -> new SimpleDoubleProperty(data.getValue().getCurrentPrice()).asObject());
+        priceCol.setCellValueFactory(data -> new SimpleDoubleProperty(data.getValue().getCurrentPrice().doubleValue()).asObject());
         marketCapCol.setCellValueFactory(data -> new SimpleLongProperty(data.getValue().getMarketCap()).asObject());
         last7dCol.setCellValueFactory(new PropertyValueFactory<>("sparklineIn7d"));
         actionCol.setCellFactory(col -> {
@@ -231,41 +234,35 @@ public class HomeController implements Initializable {
             pieChart.getData().clear();
             pieChart.getData().add(emptyData);
 
-            float totalMoney = 0;
-            float totalTransaction = 0;
+            BigDecimal totalMoney = BigDecimal.ZERO;
+            BigDecimal totalTransaction = BigDecimal.ZERO;
 
             for (Transaction transaction : currentWallet.getTransactions()) {
-                if ("CREATE_WALLET".equals(transaction.getTransactionType())) {
-                    totalMoney += transaction.getPrice();
-                }
-                if ("CLONE_WALLET".equals(transaction.getTransactionType())) {
-                    totalMoney += transaction.getPrice();
-                }
-                if ("DEPOSIT_MONEY".equals(transaction.getTransactionType())) {
-                    totalMoney += transaction.getPrice();
+                if (Arrays.asList("CREATE_WALLET", "CLONE_WALLET", "DEPOSIT_MONEY").contains(transaction.getTransactionType())) {
+                    totalMoney = totalMoney.add(transaction.getPrice());
                 }
             }
             for (Transaction transaction : currentWallet.getTransactions()) {
-                if ("PURCHASE_TOKEN".equals(transaction.getTransactionType())) {
+                if (Arrays.asList("PURCHASE_TOKEN", "SAVING_MONEY").contains(transaction.getTransactionType())) {
                     String title = transaction.getToken();
-                    PieChart.Data segment = new PieChart.Data(transaction.getToken(), (transaction.getPrice() * 100) / totalMoney);
-                    totalTransaction += transaction.getPrice();
+                    BigDecimal pricePercentage = transaction.getPrice().multiply(BigDecimal.valueOf(100)).divide(totalMoney, 2, RoundingMode.HALF_UP);
+
+                    PieChart.Data segment = new PieChart.Data(transaction.getToken(), pricePercentage.doubleValue());
+                    totalTransaction = totalTransaction.add(transaction.getPrice());
                     pieChart.getData().add(segment);
-                    addTooltipToChartData(segment, title, transaction.getToken() + " : " + transaction.getPrice());
-                }
-                if ("SAVING_MONEY".equals(transaction.getTransactionType())) {
-                    String title = transaction.getToken();
-                    PieChart.Data segment = new PieChart.Data(transaction.getToken(), (transaction.getPrice() * 100) / totalMoney);
-                    totalTransaction += transaction.getPrice();
-                    pieChart.getData().add(segment);
-                    addTooltipToChartData(segment, title, "Saving : " + transaction.getPrice());
+                    if ("SAVING_MONEY".equals(transaction.getTransactionType())) {
+                        addTooltipToChartData(segment, title, "Saving : " + transaction.getPrice());
+                    } else {
+                        addTooltipToChartData(segment, title, transaction.getToken() + " : " + transaction.getPrice());
+                    }
                 }
             }
             moneyWallet.setText(totalMoney + " " + currentWallet.getCurrency());
-            moneyLeft = totalMoney - totalTransaction;
-            PieChart.Data segment = new PieChart.Data("Money still available : ", moneyLeft * 100 / totalMoney);
+            moneyLeft = totalMoney.subtract(totalTransaction);
+            BigDecimal moneyLeftPercentage = moneyLeft.multiply(BigDecimal.valueOf(100)).divide(totalMoney, 2, RoundingMode.HALF_UP);
+            PieChart.Data segment = new PieChart.Data("Money still available : ", moneyLeftPercentage.doubleValue());
             pieChart.getData().add(segment);
-            addTooltipToChartData(segment, String.valueOf(((totalMoney - totalTransaction) * 100) / totalMoney), "Money still available : " + moneyLeft);
+            addTooltipToChartData(segment, String.valueOf(moneyLeftPercentage), "Money still available : " + moneyLeft);
             pieChart.setLabelsVisible(false);
             moneyLeftLabel.setText("Money Left : " + moneyLeft);
         }
@@ -361,9 +358,9 @@ public class HomeController implements Initializable {
         // Traitez ici les données saisies
         System.out.println("Title : " + title + ", Description : " + description);
         System.out.println("Montant : " + amount + ", Devise : " + currency);
-        Wallet wallet = new Wallet(title, description, Float.parseFloat(amount), LocalDateTime.now(), currency);
+        Wallet wallet = new Wallet(title, description, BigDecimal.valueOf(Float.parseFloat(amount)), LocalDateTime.now(), currency);
         GestionWallet gestionWallet = new GestionWallet();
-        Transaction transaction = new Transaction(TransactionType.CREATE_WALLET.name(), Float.parseFloat(amount), currency, LocalDateTime.now(), 0, null);
+        Transaction transaction = new Transaction(TransactionType.CREATE_WALLET.name(), BigDecimal.valueOf(Float.parseFloat(amount)), currency, LocalDateTime.now(), BigDecimal.ZERO, null, null);
         GestionTransaction gestionTransaction = new GestionTransaction();
         gestionWallet.newWallet(wallet, currentUser.getId());
         gestionTransaction.writeTransaction(transaction, wallet.getId(), currentUser.getId());
@@ -416,7 +413,7 @@ public class HomeController implements Initializable {
         return apiCaller.getLatestNews();
     }
 
-    private Optional<Float> afficherDialogueDepot() {
+    private Optional<BigDecimal> afficherDialogueDepot() {
         TextInputDialog dialog = new TextInputDialog("0");
         dialog.setTitle("Dépôt d'Argent");
         dialog.setHeaderText("Déposer de l'argent");
@@ -425,7 +422,7 @@ public class HomeController implements Initializable {
         Optional<String> result = dialog.showAndWait();
         if (result.isPresent()) {
             try {
-                return Optional.of(Float.parseFloat(result.get()));
+                return Optional.of(BigDecimal.valueOf(Float.parseFloat(result.get())));
             } catch (NumberFormatException e) {
                 // Gérer l'erreur si l'entrée n'est pas un nombre valide
                 return Optional.empty();
@@ -437,15 +434,15 @@ public class HomeController implements Initializable {
 
     @FXML
     public void onHandleDepotButton(ActionEvent actionEvent) {
-        Optional<Float> montantDepot = afficherDialogueDepot();
+        Optional<BigDecimal> montantDepot = afficherDialogueDepot();
         montantDepot.ifPresent(montant -> {
-            Transaction transaction = new Transaction(TransactionType.DEPOSIT_MONEY.name(), montant, currentWallet.getCurrency(), LocalDateTime.now(), 0, null);
+            Transaction transaction = new Transaction(TransactionType.DEPOSIT_MONEY.name(), montant, currentWallet.getCurrency(), LocalDateTime.now(), BigDecimal.ZERO, null, null);
             GestionTransaction gestionTransaction = new GestionTransaction();
             gestionTransaction.writeTransaction(transaction, currentWallet.getId(), currentUser.getId());
             currentWallet.getTransactions().add(transaction);
             transactionData.add(transaction);
             transactionsTableView.refresh();
-            currentWallet.setMoney(currentWallet.getMoney() + montant);
+            currentWallet.setMoney(currentWallet.getMoney().add(montant));
             moneyWallet.setText(currentWallet.getMoney() + " " + currentWallet.getCurrency());
             updateHeader();
         });
@@ -519,11 +516,12 @@ public class HomeController implements Initializable {
     @FXML
     public void onHandleSwitchCurrency(ActionEvent actionEvent) {
         // 1 eur = 1.10 usd
-        if (currentWallet.getCurrency().equals("EUR")) {
-            moneyLeft = moneyLeft * 1.10f;
+        BigDecimal rate = new BigDecimal("1.10");
+        if (currentWallet.getCurrency().equalsIgnoreCase("eur")) {
+            moneyLeft = moneyLeft.multiply(rate);
             currentWallet.setCurrency("usd");
         } else {
-            moneyLeft = moneyLeft / 1.10f;
+            moneyLeft = moneyLeft.divide(rate, 2, RoundingMode.HALF_UP);
             currentWallet.setCurrency("eur");
         }
         moneyLeftLabel.setText("Money Left : " + moneyLeft);

@@ -14,22 +14,24 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 
 
 public class PurchaseTokenPopup {
-    private float moneyLeft;
+    private BigDecimal moneyLeft;
     private Stage stage;
     private TextField numberField;
     private Label labelToken;
     private float result;
     private Wallet currentWallet;
     private CryptoCurrency crypto;
-    private double amount;
+    private BigDecimal amount;
     private long idUser;
     private ObservableList<Transaction> transactionData;
 
-    public PurchaseTokenPopup(CryptoCurrency crypto, Wallet currentWallet, float moneyLeft, long idUser, ObservableList<Transaction> transactionData) {
+    public PurchaseTokenPopup(CryptoCurrency crypto, Wallet currentWallet, BigDecimal moneyLeft, long idUser, ObservableList<Transaction> transactionData) {
         this.idUser = idUser;
         this.moneyLeft = moneyLeft;
         this.transactionData = transactionData;
@@ -62,11 +64,11 @@ public class PurchaseTokenPopup {
 
     private void handleSubmit() {
         try {
-            float investmentAmount = Float.parseFloat(numberField.getText());
+            BigDecimal investmentAmount = BigDecimal.valueOf(Double.parseDouble(numberField.getText()));
 
-            if (investmentAmount <= moneyLeft) {
-                this.amount = investmentAmount / crypto.getCurrentPrice();
-                Transaction transaction = new Transaction(TransactionType.PURCHASE_TOKEN.name(), investmentAmount, currentWallet.getCurrency(), LocalDateTime.now(), amount, crypto.getSymbol());
+            if (investmentAmount.compareTo(moneyLeft) <= 0) {
+                this.amount = investmentAmount.divide(crypto.getCurrentPrice(), 2, RoundingMode.HALF_UP);
+                Transaction transaction = new Transaction(TransactionType.PURCHASE_TOKEN.name(), investmentAmount, currentWallet.getCurrency(), LocalDateTime.now(), amount, crypto.getSymbol(), crypto.getId());
                 GestionTransaction gestionTransaction = new GestionTransaction();
                 gestionTransaction.writeTransaction(transaction, currentWallet.getId(), idUser);
                 currentWallet.getTransactions().add(transaction);

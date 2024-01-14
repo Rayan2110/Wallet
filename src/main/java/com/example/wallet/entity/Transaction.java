@@ -1,5 +1,6 @@
 package com.example.wallet.entity;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class Transaction {
@@ -9,17 +10,18 @@ public class Transaction {
     private String transactionType; //Achat ou vente
 
 
-    private float price; // prix en euros, dollars
+    private BigDecimal price; // prix en euros, dollars
 
     private String currency;
 
     private LocalDateTime date;
 
-    private double amount; // prix en terme d'unité ( crypto, action, etc )
+    private BigDecimal amount; // prix en terme d'unité ( crypto, action, etc )
 
     private String token;
+    private String idToken;
 
-    public Transaction(long id, String transactionType, float price, String currency, LocalDateTime date, float amount, String token) {
+    public Transaction(long id, String transactionType, BigDecimal price, String currency, LocalDateTime date, BigDecimal amount, String token, String idToken) {
         this.id = id;
         this.transactionType = transactionType;
         this.price = price;
@@ -27,15 +29,17 @@ public class Transaction {
         this.date = date;
         this.amount = amount;
         this.token = token;
+        this.idToken = idToken;
     }
 
-    public Transaction(String transactionType, float price, String currency, LocalDateTime date, double amount, String token) {
+    public Transaction(String transactionType, BigDecimal price, String currency, LocalDateTime date, BigDecimal amount, String token, String idToken) {
         this.transactionType = transactionType;
         this.price = price;
         this.currency = currency;
         this.date = date;
         this.amount = amount;
         this.token = token;
+        this.idToken = idToken;
     }
 
     public long getId() {
@@ -54,11 +58,11 @@ public class Transaction {
         this.transactionType = transactionType;
     }
 
-    public float getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(float price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
@@ -70,7 +74,7 @@ public class Transaction {
         this.currency = currency;
     }
 
-    public void setAmount(double amount) {
+    public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
 
@@ -82,12 +86,8 @@ public class Transaction {
         this.date = date;
     }
 
-    public double getAmount() {
+    public BigDecimal getAmount() {
         return amount;
-    }
-
-    public void setAmount(float amount) {
-        this.amount = amount;
     }
 
     public String getToken() {
@@ -98,4 +98,11 @@ public class Transaction {
         this.token = token;
     }
 
+    public String getIdToken() {
+        return idToken;
+    }
+
+    public void setIdToken(String idToken) {
+        this.idToken = idToken;
+    }
 }

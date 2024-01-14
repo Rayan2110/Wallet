@@ -13,18 +13,19 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class SavingMoneyPopup {
     Wallet currentWallet;
     private float result;
     private TextField numberField;
-    float moneyLeft;
+    BigDecimal moneyLeft;
     long currentIdUser;
     private Stage stage;
     ObservableList<Transaction> transactionData;
 
-    public SavingMoneyPopup(Wallet currentWallet, float moneyLeft, long currentIdUser, ObservableList<Transaction> transactionData) {
+    public SavingMoneyPopup(Wallet currentWallet, BigDecimal moneyLeft, long currentIdUser, ObservableList<Transaction> transactionData) {
         this.currentWallet = currentWallet;
         this.moneyLeft = moneyLeft;
         this.currentIdUser = currentIdUser;
@@ -55,10 +56,10 @@ public class SavingMoneyPopup {
 
     private void handleSubmit() {
         try {
-            float savingAmount = Float.parseFloat(numberField.getText());
+            BigDecimal savingAmount = BigDecimal.valueOf(Double.parseDouble(numberField.getText()));
 
-            if (savingAmount <= moneyLeft) {
-                Transaction transaction = new Transaction(TransactionType.SAVING_MONEY.name(), savingAmount, currentWallet.getCurrency(), LocalDateTime.now(), 0, null);
+            if (savingAmount.compareTo(moneyLeft) <= 0) {
+                Transaction transaction = new Transaction(TransactionType.SAVING_MONEY.name(), savingAmount, currentWallet.getCurrency(), LocalDateTime.now(), BigDecimal.ZERO, null, null);
                 GestionTransaction gestionTransaction = new GestionTransaction();
                 gestionTransaction.writeTransaction(transaction, currentWallet.getId(), currentIdUser);
                 currentWallet.getTransactions().add(transaction);

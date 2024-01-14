@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -71,7 +72,7 @@ public class GestionWallet {
 
                 if (idUserRegister == idUser) {
 
-                    Wallet wallet = new Wallet(Long.parseLong(parts[0]), parts[1], parts[2], Float.parseFloat(parts[3]), LocalDateTime.parse(parts[4]), parts[5]);
+                    Wallet wallet = new Wallet(Long.parseLong(parts[0]), parts[1], parts[2], BigDecimal.valueOf(Double.parseDouble(parts[3])), LocalDateTime.parse(parts[4]), parts[5]);
                     wallets.add(wallet);
                 }
             }
@@ -88,7 +89,7 @@ public class GestionWallet {
 
         gestionWallet.newWallet(cloneWallet, idUser);
 
-        Transaction transactionClone = new Transaction(CLONE_WALLET.name(), currentWallet.getMoney(), currentWallet.getCurrency(), LocalDateTime.now(), 0, null);
+        Transaction transactionClone = new Transaction(CLONE_WALLET.name(), currentWallet.getMoney(), currentWallet.getCurrency(), LocalDateTime.now(), BigDecimal.ZERO, null, null);
         gestionTransaction.writeTransaction(transactionClone, cloneWallet.getId(), idUser);
         cloneWallet.getTransactions().add(transactionClone);
         for (Transaction transaction : currentWallet.getTransactions()) {

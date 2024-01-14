@@ -32,6 +32,14 @@ public class ApiCaller {
         return gson.fromJson(jsonResponse, listType);
     }
 
+    public Object getPriceOfAnyToken(String idToken, String currency) {
+        String url = BASE_URL + "/coins/price?ids=" + idToken + "&vs_currencies=" + currency;
+        String jsonResponse = makeApiCall(url);
+        Type listType = new TypeToken<Object>() {
+        }.getType();
+        return gson.fromJson(jsonResponse, listType);
+    }
+
     public News getLatestNews() {
         String url = "https://min-api.cryptocompare.com/data/v2/news/?lang=EN"; // Replace with the actual URL for news
         String jsonResponse = makeApiCall(url);

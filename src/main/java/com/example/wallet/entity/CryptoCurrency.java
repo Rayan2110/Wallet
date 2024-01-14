@@ -2,6 +2,8 @@ package com.example.wallet.entity;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.math.BigDecimal;
+
 public class CryptoCurrency {
     private String id;
     private String symbol;
@@ -9,7 +11,7 @@ public class CryptoCurrency {
     private String image;
 
     @SerializedName("current_price")
-    private double currentPrice;
+    private BigDecimal currentPrice;
 
     @SerializedName("market_cap")
     private long marketCap;
@@ -109,11 +111,11 @@ public class CryptoCurrency {
         this.image = image;
     }
 
-    public double getCurrentPrice() {
+    public BigDecimal getCurrentPrice() {
         return currentPrice;
     }
 
-    public void setCurrentPrice(double currentPrice) {
+    public void setCurrentPrice(BigDecimal currentPrice) {
         this.currentPrice = currentPrice;
     }
 

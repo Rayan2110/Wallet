@@ -1,5 +1,6 @@
 package com.example.wallet.entity;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +13,7 @@ public class Wallet {
 
     private String description;
 
-    private float money;
+    private BigDecimal money;
 
     private List<Transaction> transactions = new ArrayList<>();
 
@@ -46,11 +47,11 @@ public class Wallet {
         this.description = description;
     }
 
-    public float getMoney() {
+    public BigDecimal getMoney() {
         return money;
     }
 
-    public void setMoney(float money) {
+    public void setMoney(BigDecimal money) {
         this.money = money;
     }
 
@@ -86,7 +87,7 @@ public class Wallet {
         this.currency = currency;
     }
 
-    public Wallet(long id, String title, String description, float money, LocalDateTime creationDate, String currency, List<Transaction> transactions) {
+    public Wallet(long id, String title, String description, BigDecimal money, LocalDateTime creationDate, String currency, List<Transaction> transactions) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -96,7 +97,7 @@ public class Wallet {
         this.transactions = transactions;
     }
 
-    public Wallet(long id, String title, String description, float money, LocalDateTime creationDate, String currency) {
+    public Wallet(long id, String title, String description, BigDecimal money, LocalDateTime creationDate, String currency) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -105,7 +106,7 @@ public class Wallet {
         this.currency = currency;
     }
 
-    public Wallet(String title, String description, float money, LocalDateTime creationDate, String currency) {
+    public Wallet(String title, String description, BigDecimal money, LocalDateTime creationDate, String currency) {
         this.title = title;
         this.description = description;
         this.money = money;
