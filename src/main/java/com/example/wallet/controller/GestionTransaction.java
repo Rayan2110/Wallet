@@ -57,11 +57,10 @@ public class GestionTransaction {
                     continue; // Données incomplètes, passe à la ligne suivante
                 }
                 String idUser = parts[1];
-                String idWallet = parts[7];
 
                 if (idUser.equals(String.valueOf(currentUser.getId()))) {
                     Transaction transaction = new Transaction(Long.parseLong(parts[0]), parts[2], Float.parseFloat(parts[3]), parts[4], LocalDateTime.parse(parts[5]), Float.parseFloat(parts[6]), parts[7]);
-                    long idWalletOfTransaction = Long.parseLong(parts[7]);
+                    long idWalletOfTransaction = Long.parseLong(parts[8]);
                     for (Wallet wallet : currentUser.getWallets()) {
                         if (wallet.getId() == idWalletOfTransaction) {
                             wallet.getTransactions().add(transaction);

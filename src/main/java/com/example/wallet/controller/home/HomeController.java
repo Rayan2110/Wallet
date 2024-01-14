@@ -114,7 +114,7 @@ public class HomeController implements Initializable {
         News cryptoArticlesApi = fetchNewsFromApi(); // Votre méthode pour récupérer les articles
         newsDisplay.setupNewsListView(newsListView, cryptoArticlesApi.getData());
 
-        currentUser = GestionUser.getInstance().getCurrentUser();
+        currentUser = GestionUser.getInstance().getCurrentUser(); // singleton
         if (currentUser.getWallets() != null && currentUser.getWallets().size() > 0) {
             currentWallet = currentUser.getWallets().get(0);
         }
@@ -408,7 +408,7 @@ public class HomeController implements Initializable {
     // Méthode pour appeler l'API et récupérer les données
     private List<CryptoCurrency> fetchDataFromApi() {
         ApiCaller apiCaller = new ApiCaller();
-        return apiCaller.getAllCoinsMarket("eur", 10, "market_cap_desc", 1, true, "7d", "fr");
+        return apiCaller.getAllCoinsMarket(currentWallet.getCurrency(), 10, "market_cap_desc", 1, true, "7d", "fr");
     }
 
     private News fetchNewsFromApi() {
@@ -450,6 +450,7 @@ public class HomeController implements Initializable {
             updateHeader();
         });
     }
+
     public void onHandleCloneButton(ActionEvent actionEvent) {
         Optional<Pair<String, String>> result = afficherDialogueClonage();
 
@@ -513,5 +514,18 @@ public class HomeController implements Initializable {
 
         updateHeader();
         transactionsTableView.refresh();
+    }
+
+    @FXML
+    public void onHandleSwitchCurrency(ActionEvent actionEvent) {
+        // 1 eur = 1.10 usd
+        if (currentWallet.getCurrency().equals("EUR")) {
+            moneyLeft = moneyLeft * 1.10f;
+            currentWallet.setCurrency("usd");
+        } else {
+            moneyLeft = moneyLeft / 1.10f;
+            currentWallet.setCurrency("eur");
+        }
+        moneyLeftLabel.setText("Money Left : " + moneyLeft);
     }
 }
