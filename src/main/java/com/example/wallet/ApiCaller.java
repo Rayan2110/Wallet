@@ -33,7 +33,7 @@ public class ApiCaller {
     }
 
     public Object getPriceOfAnyToken(String idToken, String currency) {
-        String url = BASE_URL + "/coins/price?ids=" + idToken + "&vs_currencies=" + currency;
+        String url = BASE_URL + "/simple/price?ids=" + idToken + "&vs_currencies=" + currency;
         String jsonResponse = makeApiCall(url);
         Type listType = new TypeToken<Object>() {
         }.getType();

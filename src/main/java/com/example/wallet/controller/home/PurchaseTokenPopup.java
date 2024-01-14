@@ -41,9 +41,9 @@ public class PurchaseTokenPopup {
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setTitle("Buy token " + crypto.getName());
 
-        labelToken = new Label("Token : " + crypto.getSymbol() + " Prix : " + crypto.getCurrentPrice());
+        labelToken = new Label("Token : " + crypto.getSymbol() + " Price : " + crypto.getCurrentPrice());
         numberField = new TextField();
-        numberField.setPromptText("Combien voulez-vous investir");
+        numberField.setPromptText("How much do you want to invest ? ");
 
         // Permet seulement les entrées numériques
         numberField.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -52,7 +52,7 @@ public class PurchaseTokenPopup {
             }
         });
 
-        Button submitButton = new Button("Soumettre");
+        Button submitButton = new Button("Submit");
         submitButton.setOnAction(e -> handleSubmit());
 
         VBox layout = new VBox(10);
@@ -76,11 +76,11 @@ public class PurchaseTokenPopup {
                 stage.close();
             } else {
                 numberField.setText("");
-                numberField.setPromptText("Montant invalide : dépasse le solde du portefeuille");
+                numberField.setPromptText("Invalid amount: exceeds wallet balance");
             }
         } catch (NumberFormatException e) {
             numberField.setText("");
-            numberField.setPromptText("Veuillez entrer un nombre valide");
+            numberField.setPromptText("Please enter a valid number");
         }
     }
 

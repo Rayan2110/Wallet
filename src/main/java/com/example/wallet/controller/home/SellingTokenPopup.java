@@ -40,19 +40,25 @@ public class SellingTokenPopup {
         ComboBox<String> comboCryptoMonnaie = new ComboBox<>();
         ObservableMap<String, String> tokenCurrencyMap = FXCollections.observableHashMap();
         for (Transaction transaction : currentWallet.getTransactions()) {
-            if (transaction.getTransactionType().equals("PURCHASE_TOKEN") && !comboCryptoMonnaie.getItems().contains(transaction.getToken())) {
-                comboCryptoMonnaie.getItems().add(transaction.getIdToken());
+            if (transaction.getTransactionType().equals("PURCHASE_TOKEN")) {
+                // Supposons que getCurrency() retourne la monnaie du token.
+                tokenCurrencyMap.put(transaction.getIdToken(), transaction.getCurrency());
+                if (!comboCryptoMonnaie.getItems().contains(transaction.getIdToken())) {
+                    comboCryptoMonnaie.getItems().add(transaction.getIdToken());
+                }
             }
         }
         // Ajout d'un écouteur d'événements pour la ComboBox
+        BigDecimal currentValueToken = BigDecimal.ZERO;
         comboCryptoMonnaie.valueProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null) {
                 String currency = tokenCurrencyMap.get(newVal);
                 if (currency != null) {
-                    fetchCurrentTokenValue(newVal, currency);
+                    Object test = fetchCurrentTokenValue(newVal, currency);
                 }
             }
         });
+
         // Ajout des ComboBox au GridPane
         GridPane grid = new GridPane();
         grid.setHgap(10);
@@ -76,6 +82,6 @@ public class SellingTokenPopup {
 
     private Object fetchCurrentTokenValue(String idToken, String currency) {
         ApiCaller apiCaller = new ApiCaller();
-        return apiCaller.getPriceOfAnyToken(idToken, currency);
+        return apiCaller.getPriceOfAnyToken(idToken, currency.toLowerCase());
     }
 }

@@ -20,7 +20,7 @@ public class GestionTransaction {
         try (FileWriter writer = new FileWriter(cheminFichier, true)) {
             long id = nbTransaction();
             transaction.setId(id);
-            writer.write(id + "|" + idUser + "|" + transaction.getTransactionType() + "|" + transaction.getPrice() + "|" + transaction.getCurrency().toUpperCase() + "|" + transaction.getDate() + "|" + transaction.getAmount() + "|" + transaction.getToken() + "|" + idWallet + "\n");
+            writer.write(id + "|" + idUser + "|" + transaction.getTransactionType() + "|" + transaction.getPrice() + "|" + transaction.getCurrency().toUpperCase() + "|" + transaction.getDate() + "|" + transaction.getAmount() + "|" + transaction.getToken() + "|" + transaction.getIdToken() + "|" + idWallet + "\n");
         } catch (IOException e) {
             e.printStackTrace();
         }
