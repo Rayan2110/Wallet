@@ -19,13 +19,13 @@ public class GestionTransaction {
         try (FileWriter writer = new FileWriter(cheminFichier, true)) {
             long id = nbTransaction();
             transaction.setId(id);
-            writer.write(id + "|" + idUser + "|" + transaction.getTransactionType() + "|" + transaction.getPrice() + "|" + transaction.getDate() + "|" + transaction.getAmount() + "|" + transaction.getToken() + "|" + idWallet + "\n");
+            writer.write(id + "|" + idUser + "|" + transaction.getTransactionType() + "|" + transaction.getPrice() + "|" + transaction.getCurrency() + "|" + transaction.getDate() + "|" + transaction.getAmount() + "|" + transaction.getToken() + "|" + idWallet + "\n");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
     public void displayTransactions(TransactionType transactionType, float price, double amount, String token, Wallet currentWallet, long idUser, ObservableList<Transaction> transactionData) {
-        Transaction transaction = new Transaction(TransactionType.PURCHASE_TOKEN.name(), price, LocalDateTime.now(), amount, token);
+        Transaction transaction = new Transaction(TransactionType.PURCHASE_TOKEN.name(), price, currentWallet.getCurrency(), LocalDateTime.now(), amount, token);
         GestionTransaction gestionTransaction = new GestionTransaction();
         gestionTransaction.writeTransaction(transaction, currentWallet.getId(), idUser);
         currentWallet.getTransactions().add(transaction);
@@ -57,11 +57,10 @@ public class GestionTransaction {
                     continue; // Données incomplètes, passe à la ligne suivante
                 }
                 String idUser = parts[1];
-                String idWallet = parts[7];
 
                 if (idUser.equals(String.valueOf(currentUser.getId()))) {
-                    Transaction transaction = new Transaction(Long.parseLong(parts[0]), parts[2], Float.parseFloat(parts[3]), LocalDateTime.parse(parts[4]), Float.parseFloat(parts[5]), parts[6]);
-                    long idWalletOfTransaction = Long.parseLong(parts[7]);
+                    Transaction transaction = new Transaction(Long.parseLong(parts[0]), parts[2], Float.parseFloat(parts[3]), parts[4], LocalDateTime.parse(parts[5]), Float.parseFloat(parts[6]), parts[7]);
+                    long idWalletOfTransaction = Long.parseLong(parts[8]);
                     for (Wallet wallet : currentUser.getWallets()) {
                         if (wallet.getId() == idWalletOfTransaction) {
                             wallet.getTransactions().add(transaction);

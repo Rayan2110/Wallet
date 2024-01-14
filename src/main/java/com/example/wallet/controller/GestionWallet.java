@@ -81,13 +81,14 @@ public class GestionWallet {
         }
         return null;
     }
+
     public void cloneWallet(Wallet currentWallet, Wallet cloneWallet, long idUser) {
         GestionTransaction gestionTransaction = new GestionTransaction();
         GestionWallet gestionWallet = new GestionWallet();
 
         gestionWallet.newWallet(cloneWallet, idUser);
 
-        Transaction transactionClone = new Transaction(CLONE_WALLET.name(),currentWallet.getMoney(), LocalDateTime.now(), 0, null);
+        Transaction transactionClone = new Transaction(CLONE_WALLET.name(), currentWallet.getMoney(), currentWallet.getCurrency(), LocalDateTime.now(), 0, null);
         gestionTransaction.writeTransaction(transactionClone, cloneWallet.getId(), idUser);
         cloneWallet.getTransactions().add(transactionClone);
         for (Transaction transaction : currentWallet.getTransactions()) {

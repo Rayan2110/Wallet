@@ -55,11 +55,12 @@
                 </children>
             </VBox>
             <HBox alignment="CENTER" prefHeight="66.0" prefWidth="766.0" spacing="5">
-                <Button fx:id="sellButton" onAction="#onHandleSellButton" style="-fx-background-color: green;" text="Vendre" />
-                <Button fx:id="dépotButton" onAction="#onHandleDepotButton" style="-fx-background-color: red;" text="Dépot" />
-                <Button onAction="#onHandleEpargneButton" style="-fx-background-color: blue;" text="Epargne" />
+                <Button fx:id="sellButton" onAction="#onHandleSellButton" style="-fx-background-color: green;" text="Sell" />
+                <Button fx:id="dépotButton" onAction="#onHandleDepotButton" style="-fx-background-color: red;" text="Deposit" />
+                <Button onAction="#onHandleEpargneButton" style="-fx-background-color: blue;" text="Saving" />
                 <Button fx:id="addWallet" onAction="#onAddMoneyButtonClick" style="-fx-background-color: yellow;" text="New Wallet" />
-            <Button fx:id="cloneButton" layoutX="326.0" layoutY="31.0" onAction="#onHandleCloneButton" style="-fx-background-color: #800080;" text="Cloner" />
+                <Button fx:id="switchCurrencyWallet" onAction="#onHandleSwitchCurrency" style="-fx-background-color: orange;" text="Change Currency" />
+                <Button fx:id="cloneButton" layoutX="326.0" layoutY="31.0" onAction="#onHandleCloneButton" style="-fx-background-color: #800080;" text="Clone" />
             </HBox>
             <Label fx:id="moneyLeftLabel" text="moneyLeft" textFill="#484100">
                 <font>
@@ -127,9 +128,10 @@
               <columns>
                 <TableColumn fx:id="typeField" prefWidth="204" text="Type" />
                 <TableColumn fx:id="priceField" prefWidth="204" text="Price" />
-                  <TableColumn fx:id="dateField" prefWidth="204" text="Date" />
+                <TableColumn fx:id="currentField" prefWidth="204" text="Current" />
                   <TableColumn fx:id="amountField" prefWidth="204" text="Amount" />
                   <TableColumn fx:id="tokenField" prefWidth="205" text="Token" />
+                  <TableColumn fx:id="dateField" prefWidth="204" text="Date" />
               </columns>
             </TableView>
     </bottom>

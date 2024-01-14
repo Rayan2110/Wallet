@@ -29,12 +29,12 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.ResourceBundle;
 
 public class HomeController implements Initializable {
 
@@ -91,6 +91,8 @@ public class HomeController implements Initializable {
     @FXML
     private TableColumn<Transaction, Number> priceField;
     @FXML
+    public TableColumn<Transaction, String> currentField;
+    @FXML
     private TableColumn<Transaction, String> dateField;
     @FXML
     private TableColumn<Transaction, String> typeField;
@@ -112,7 +114,7 @@ public class HomeController implements Initializable {
         News cryptoArticlesApi = fetchNewsFromApi(); // Votre méthode pour récupérer les articles
         newsDisplay.setupNewsListView(newsListView, cryptoArticlesApi.getData());
 
-        currentUser = GestionUser.getInstance().getCurrentUser();
+        currentUser = GestionUser.getInstance().getCurrentUser(); // singleton
         if (currentUser.getWallets() != null && currentUser.getWallets().size() > 0) {
             currentWallet = currentUser.getWallets().get(0);
         }
@@ -137,6 +139,7 @@ public class HomeController implements Initializable {
         amountField.setCellValueFactory(new PropertyValueFactory<>("amount"));
         tokenField.setCellValueFactory(new PropertyValueFactory<>("token"));
         priceField.setCellValueFactory(new PropertyValueFactory<>("price"));
+        currentField.setCellValueFactory(new PropertyValueFactory<>("currency"));
 
         // Chargez vos transactions depuis le fichier ici
         if (currentWallet != null) {
@@ -289,15 +292,6 @@ public class HomeController implements Initializable {
         transactionsTableView.refresh();
     }
 
-    private void saveToTransactionFile(String montant) {
-        Transaction transaction = new Transaction(TransactionType.SAVING_MONEY.name(), Float.parseFloat(montant), LocalDateTime.now(), 0, null);
-        GestionTransaction gestionTransaction = new GestionTransaction();
-        gestionTransaction.writeTransaction(transaction, currentWallet.getId(), currentUser.getId());
-        currentWallet.getTransactions().add(transaction);
-        updateHeader();
-        transactionsTableView.refresh();
-    }
-
     private void buyCryptoCurrency(CryptoCurrency crypto, User currentUser, Wallet currentWallet) {
         PurchaseTokenPopup popup = new PurchaseTokenPopup(crypto, currentWallet, moneyLeft, currentUser.getId(), transactionData);
         float result = popup.showAndWait();
@@ -330,13 +324,13 @@ public class HomeController implements Initializable {
         popupWindow.setTitle("New wallet");
 
         // Création des éléments du formulaire
-        Label labelWalletTitle = new Label("Entrez le nom de votre porte-monnaie");
+        Label labelWalletTitle = new Label("Enter the name of your wallet");
         TextField textFieldWalletTitle = new TextField();
 
-        Label labelWalletDescription = new Label("Entrez une description");
+        Label labelWalletDescription = new Label("Enter a description");
         TextField textFieldWalletDescription = new TextField();
 
-        Label labelWalletMoney = new Label("Montant à ajouter");
+        Label labelWalletMoney = new Label("Amount to add");
         TextField numberField = new TextField();
         numberField.addEventFilter(KeyEvent.KEY_TYPED, event -> {
             if (!event.getCharacter().matches("[0-9]")) {
@@ -349,8 +343,8 @@ public class HomeController implements Initializable {
         currencyComboBox.getItems().addAll("EUR", "USD");
         currencyComboBox.setValue("EUR"); // Valeur par défaut
 
-        Button submitButton = new Button("Soumettre");
-        submitButton.setOnAction(e -> handleSubmitButton(textFieldWalletTitle.getText(), textFieldWalletDescription.getText(), numberField.getText(), currencyComboBox.getValue(), popupWindow));
+        Button submitButton = new Button("Submit");
+        submitButton.setOnAction(e -> handleSubmitButtonNewWallet(textFieldWalletTitle.getText(), textFieldWalletDescription.getText(), numberField.getText(), currencyComboBox.getValue(), popupWindow));
 
         VBox layout = new VBox(10);
         layout.setPadding(new Insets(20));
@@ -363,13 +357,13 @@ public class HomeController implements Initializable {
     }
 
 
-    private void handleSubmitButton(String title, String description, String amount, String currency, Stage popupStage) {
+    private void handleSubmitButtonNewWallet(String title, String description, String amount, String currency, Stage popupStage) {
         // Traitez ici les données saisies
         System.out.println("Title : " + title + ", Description : " + description);
         System.out.println("Montant : " + amount + ", Devise : " + currency);
         Wallet wallet = new Wallet(title, description, Float.parseFloat(amount), LocalDateTime.now(), currency);
         GestionWallet gestionWallet = new GestionWallet();
-        Transaction transaction = new Transaction(TransactionType.CREATE_WALLET.name(), Float.parseFloat(amount), LocalDateTime.now(), 0, null);
+        Transaction transaction = new Transaction(TransactionType.CREATE_WALLET.name(), Float.parseFloat(amount), currency, LocalDateTime.now(), 0, null);
         GestionTransaction gestionTransaction = new GestionTransaction();
         gestionWallet.newWallet(wallet, currentUser.getId());
         gestionTransaction.writeTransaction(transaction, wallet.getId(), currentUser.getId());
@@ -391,6 +385,7 @@ public class HomeController implements Initializable {
         successAlert.setTitle("Succès");
         successAlert.setHeaderText("Opération réussie avec le montant : " + amount + " " + currency);
         successAlert.showAndWait();
+        switchWallet(currentWallet);
     }
 
 
@@ -413,7 +408,7 @@ public class HomeController implements Initializable {
     // Méthode pour appeler l'API et récupérer les données
     private List<CryptoCurrency> fetchDataFromApi() {
         ApiCaller apiCaller = new ApiCaller();
-        return apiCaller.getAllCoinsMarket("eur", 10, "market_cap_desc", 1, true, "7d", "fr");
+        return apiCaller.getAllCoinsMarket(currentWallet.getCurrency(), 10, "market_cap_desc", 1, true, "7d", "fr");
     }
 
     private News fetchNewsFromApi() {
@@ -444,7 +439,7 @@ public class HomeController implements Initializable {
     public void onHandleDepotButton(ActionEvent actionEvent) {
         Optional<Float> montantDepot = afficherDialogueDepot();
         montantDepot.ifPresent(montant -> {
-            Transaction transaction = new Transaction(TransactionType.DEPOSIT_MONEY.name(), montant, LocalDateTime.now(), 0, null);
+            Transaction transaction = new Transaction(TransactionType.DEPOSIT_MONEY.name(), montant, currentWallet.getCurrency(), LocalDateTime.now(), 0, null);
             GestionTransaction gestionTransaction = new GestionTransaction();
             gestionTransaction.writeTransaction(transaction, currentWallet.getId(), currentUser.getId());
             currentWallet.getTransactions().add(transaction);
@@ -456,31 +451,6 @@ public class HomeController implements Initializable {
         });
     }
 
-    /*public void onHandleCloneButton(ActionEvent actionEvent) {
-        Optional<Pair<String, String>> result = afficherDialogueClonage();
-
-        result.ifPresent(titreDescription -> {
-            String nouveauTitre = titreDescription.getKey();
-            String nouvelleDescription = titreDescription.getValue();
-
-            GestionWallet gestionWallet = new GestionWallet();
-            gestionWallet.newWallet(currentWallet, currentUser.getId());
-
-            Wallet wallet = new Wallet(nouveauTitre, nouvelleDescription, currentWallet.getMoney(), LocalDateTime.now(), currentWallet.getCurrency());
-            Transaction transaction = new Transaction(TransactionType.CLONE_WALLET.name(), currentWallet.getMoney(), LocalDateTime.now(), 0, null);
-
-            GestionTransaction gestionTransaction = new GestionTransaction();
-            gestionWallet.newWallet(wallet, currentUser.getId());
-            gestionTransaction.writeTransaction(transaction, wallet.getId(), currentUser.getId());
-
-            wallet.getTransactions().add(transaction);
-            currentUser.getWallets().add(wallet);
-
-            MenuItem menuItem = new MenuItem(nouveauTitre);
-            menuItem.setOnAction(e -> switchWallet(wallet));
-            walletsItems.getItems().add(menuItem);
-        });
-    }*/
     public void onHandleCloneButton(ActionEvent actionEvent) {
         Optional<Pair<String, String>> result = afficherDialogueClonage();
 
@@ -544,5 +514,18 @@ public class HomeController implements Initializable {
 
         updateHeader();
         transactionsTableView.refresh();
+    }
+
+    @FXML
+    public void onHandleSwitchCurrency(ActionEvent actionEvent) {
+        // 1 eur = 1.10 usd
+        if (currentWallet.getCurrency().equals("EUR")) {
+            moneyLeft = moneyLeft * 1.10f;
+            currentWallet.setCurrency("usd");
+        } else {
+            moneyLeft = moneyLeft / 1.10f;
+            currentWallet.setCurrency("eur");
+        }
+        moneyLeftLabel.setText("Money Left : " + moneyLeft);
     }
 }
