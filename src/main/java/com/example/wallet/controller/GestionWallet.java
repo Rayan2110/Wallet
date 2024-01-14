@@ -92,9 +92,11 @@ public class GestionWallet {
         gestionTransaction.writeTransaction(transactionClone, cloneWallet.getId(), idUser);
         cloneWallet.getTransactions().add(transactionClone);
         for (Transaction transaction : currentWallet.getTransactions()) {
-            transactionClone = transaction;
-            gestionTransaction.writeTransaction(transactionClone, cloneWallet.getId(), idUser);
-            cloneWallet.getTransactions().add(transactionClone);
+            if (!transaction.getTransactionType().equals("CREATE_WALLET") && !transaction.getTransactionType().equals("CLONE_WALLET")) {
+                transactionClone = transaction;
+                gestionTransaction.writeTransaction(transactionClone, cloneWallet.getId(), idUser);
+                cloneWallet.getTransactions().add(transactionClone);
+            }
         }
     }
 }
