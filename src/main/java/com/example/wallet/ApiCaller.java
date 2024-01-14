@@ -4,12 +4,14 @@ import com.example.wallet.entity.CryptoCurrency;
 import com.example.wallet.entity.Articles;
 import com.example.wallet.entity.News;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
@@ -32,12 +34,14 @@ public class ApiCaller {
         return gson.fromJson(jsonResponse, listType);
     }
 
-    public Object getPriceOfAnyToken(String idToken, String currency) {
+    public BigDecimal getPriceOfAnyToken(String idToken, String currency) {
         String url = BASE_URL + "/simple/price?ids=" + idToken + "&vs_currencies=" + currency;
         String jsonResponse = makeApiCall(url);
-        Type listType = new TypeToken<Object>() {
-        }.getType();
-        return gson.fromJson(jsonResponse, listType);
+        Gson gson = new Gson();
+        JsonObject jsonObject = gson.fromJson(jsonResponse, JsonObject.class);
+        // Extraction de la valeur en tant que BigDecimal
+        BigDecimal price = jsonObject.getAsJsonObject(idToken).get(currency).getAsBigDecimal();
+        return price;
     }
 
     public News getLatestNews() {
