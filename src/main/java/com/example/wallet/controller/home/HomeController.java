@@ -1,6 +1,7 @@
 package com.example.wallet.controller.home;
 
 import com.example.wallet.ApiCaller;
+import com.example.wallet.HelloApplication;
 import com.example.wallet.controller.GestionTransaction;
 import com.example.wallet.controller.GestionUser;
 import com.example.wallet.controller.GestionWallet;
@@ -13,8 +14,11 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.*;
 import javafx.scene.control.*;
@@ -33,8 +37,11 @@ import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
+
+import static com.example.wallet.HelloApplication.stage;
 
 public class HomeController implements Initializable {
 
@@ -527,5 +534,12 @@ public class HomeController implements Initializable {
             currentWallet.setCurrency("eur");
         }
         moneyLeftLabel.setText("Money Left : " + moneyLeft);
+    }
+    @FXML
+    public void onHandleDisconnectButton(ActionEvent actionEvent) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
+        Scene scene = new Scene(fxmlLoader.load(), 1024, 768); // standard de base
+        stage.setScene(scene);
+        stage.show();
     }
 }

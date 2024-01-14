@@ -7,20 +7,14 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane prefHeight="1024.0" prefWidth="768.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.wallet.controller.home.HomeController">
+<BorderPane prefHeight="1024.0" prefWidth="768.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.wallet.controller.home.HomeController">
     <top>
         <VBox alignment="CENTER" spacing="5">
             <MenuBar>
                 <menus>
-                    <Menu mnemonicParsing="false" text="Accueil" />
                     <Menu fx:id="walletsItems" mnemonicParsing="false" text="Vos Wallets">
                         <items>
 
-                        </items>
-                    </Menu>
-                    <Menu mnemonicParsing="false" text="Vos Transactions">
-                        <items>
-                            <MenuItem mnemonicParsing="false" text="About" />
                         </items>
                     </Menu>
                 </menus>
@@ -60,7 +54,8 @@
                 <Button onAction="#onHandleEpargneButton" style="-fx-background-color: blue;" text="Saving" />
                 <Button fx:id="addWallet" onAction="#onAddMoneyButtonClick" style="-fx-background-color: yellow;" text="New Wallet" />
                 <Button fx:id="switchCurrencyWallet" onAction="#onHandleSwitchCurrency" style="-fx-background-color: orange;" text="Change Currency" />
-                <Button fx:id="cloneButton" layoutX="326.0" layoutY="31.0" onAction="#onHandleCloneButton" style="-fx-background-color: #800080;" text="Clone" />
+                <Button fx:id="cloneButton" onAction="#onHandleCloneButton" style="-fx-background-color: #800080;" text="Clone" />
+            <Button fx:id="DisconnectButton" mnemonicParsing="false" onAction="#onHandleDisconnectButton" style="-fx-background-color: #FF00FF;" text="Disconnect" />
             </HBox>
             <Label fx:id="moneyLeftLabel" text="moneyLeft" textFill="#484100">
                 <font>

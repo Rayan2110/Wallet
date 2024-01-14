@@ -18,7 +18,6 @@ public class HelloController {
         Scene scene = new Scene(fxmlLoader.load(), 1024, 768); // standard de base
         stage.setScene(scene);
         stage.show();
-
     }
 
     @FXML
