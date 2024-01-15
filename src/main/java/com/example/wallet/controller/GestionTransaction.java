@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 
 public class GestionTransaction {
 
-    private String cheminFichier = "src/main/resources/bdd/transactions.txt"; // Remplacez par le chemin de votre fichier
+    private String cheminFichier = "src/main/resources/bdd/transactions.txt";
 
     public void writeTransaction(Transaction transaction, long idWallet, long idUser) {
         try (FileWriter writer = new FileWriter(cheminFichier, true)) {
@@ -56,7 +56,7 @@ public class GestionTransaction {
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split("\\|");
                 if (parts.length < 7) {
-                    continue; // Données incomplètes, passe à la ligne suivante
+                    continue;
                 }
                 String idUser = parts[1];
 

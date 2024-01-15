@@ -39,7 +39,7 @@
                     </Label>
                     <Region prefHeight="1.0" prefWidth="768.0" />
                     <PieChart fx:id="pieChart" prefHeight="150" prefWidth="768.0">
-                        <!-- PieChart data -->
+
                     </PieChart>
                     <Label fx:id="descriptionWallet" contentDisplay="CENTER" layoutX="382.0" layoutY="63.0" text="." textAlignment="CENTER" textFill="#00223c">
                         <font>
@@ -68,7 +68,7 @@
         </VBox>
     </top>
     <center>
-        <!-- TableView avec colonnes définies dans le fichier FXML -->
+
         <TableView fx:id="tableView">
             <columns>
                 <TableColumn fx:id="imageCol" prefWidth="76.0">
@@ -111,10 +111,10 @@
     </center>
     <right>
         <VBox fx:id="newsVBox" prefHeight="714.0" prefWidth="280.0" spacing="10" style="-fx-background-color: #EEEEEE;">
-            <!-- Changed color for a lighter one -->
+
             <Text style="-fx-font-weight: bold; -fx-font-size: 16px;" text="News" VBox.vgrow="NEVER" />
             <ListView fx:id="newsListView" VBox.vgrow="ALWAYS">
-                <!-- The news items will be added here programmatically -->
+
             </ListView>
         </VBox>
     </right>

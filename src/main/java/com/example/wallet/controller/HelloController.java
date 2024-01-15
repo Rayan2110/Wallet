@@ -13,7 +13,6 @@ public class HelloController {
 
     @FXML
     protected void onConnexionButtonClick() throws IOException {
-        //FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("connexion-view.fxml"));
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("connexion-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 1024, 768); // standard de base
         stage.setScene(scene);
@@ -23,7 +22,7 @@ public class HelloController {
     @FXML
     public void onInscriptionButtonClick() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("inscription-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 1024, 768); // standard de base
+        Scene scene = new Scene(fxmlLoader.load(), 1024, 768);
         stage.setScene(scene);
         stage.show();
     }

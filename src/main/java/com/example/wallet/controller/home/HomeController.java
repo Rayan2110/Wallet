@@ -60,7 +60,7 @@ public class HomeController implements Initializable {
     private Label descriptionWallet;
 
     @FXML
-    private TableView<CryptoCurrency> tableView; // Assure-toi que tu as bien défini TableView dans ton fichier FXML
+    private TableView<CryptoCurrency> tableView;
 
     @FXML
     private TableColumn<CryptoCurrency, String> imageCol;
@@ -121,7 +121,7 @@ public class HomeController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         newsDisplay = new NewsDisplay();
 
-        News cryptoArticlesApi = fetchNewsFromApi(); // Votre méthode pour récupérer les articles
+        News cryptoArticlesApi = fetchNewsFromApi(); // méthode pour récupérer les articles
         newsDisplay.setupNewsListView(newsListView, cryptoArticlesApi.getData());
 
         currentUser = GestionUser.getInstance().getCurrentUser(); // singleton
@@ -154,7 +154,7 @@ public class HomeController implements Initializable {
         // Chargez vos transactions depuis le fichier ici
         if (currentWallet != null) {
             List<Transaction> transactions = currentWallet.getTransactions();
-            transactionData.addAll(transactions); // Ajouter les transactions à la liste observable
+            transactionData.addAll(transactions); // Ajoute les transactions à la liste observable
             transactionsTableView.setItems(transactionData);
 
             transactionsTableView.refresh();
@@ -342,7 +342,7 @@ public class HomeController implements Initializable {
             }
         });
 
-        // ComboBox pour la devise
+
         ComboBox<String> currencyComboBox = new ComboBox<>();
         currencyComboBox.getItems().addAll("EUR", "USD");
         currencyComboBox.setValue("EUR"); // Valeur par défaut
@@ -362,7 +362,6 @@ public class HomeController implements Initializable {
 
 
     private void handleSubmitButtonNewWallet(String title, String description, String amount, String currency, Stage popupStage) {
-        // Traitez ici les données saisies
         System.out.println("Title : " + title + ", Description : " + description);
         System.out.println("Montant : " + amount + ", Devise : " + currency);
         Wallet wallet = new Wallet(title, description, BigDecimal.valueOf(Float.parseFloat(amount)), LocalDateTime.now(), currency);
@@ -431,7 +430,7 @@ public class HomeController implements Initializable {
             try {
                 return Optional.of(BigDecimal.valueOf(Float.parseFloat(result.get())));
             } catch (NumberFormatException e) {
-                // Gérer l'erreur si l'entrée n'est pas un nombre valide
+                // Gére l'erreur si l'entrée n'est pas un nombre valide
                 return Optional.empty();
             }
         } else {
@@ -473,7 +472,6 @@ public class HomeController implements Initializable {
     }
 
     private Optional<Pair<String, String>> afficherDialogueClonage() {
-        // Création de la boîte de dialogue
         Dialog<Pair<String, String>> dialog = new Dialog<>();
         dialog.setTitle("Cloner le Portefeuille");
         dialog.setHeaderText("Entrez le titre et la description du nouveau portefeuille");

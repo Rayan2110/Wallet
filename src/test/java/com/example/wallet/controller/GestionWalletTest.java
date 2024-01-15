@@ -20,22 +20,18 @@ public class GestionWalletTest {
     @Test
     public void testNewWallet() {
         Wallet wallet = new Wallet(1, "Wallet 1", "Description 1", BigDecimal.valueOf(100.0), LocalDateTime.now(), "USD");
-        long userId = 1; // Replace with a valid user ID
+        long userId = 1;
         gestionWallet.newWallet(wallet, userId);
 
-        // You can add assertions to check if the wallet was added successfully to the file.
-        // You may need to read the file and verify its contents.
     }
 
     @Test
     public void testCheckMyWallets() {
-        long userId = 1; // Replace with a valid user ID
+        long userId = 1;
 
         List<Wallet> wallets = gestionWallet.checkMyWallets(userId);
 
-        // You can add assertions to check if the returned list of wallets contains the expected wallets for the user.
-        // You may need to read the file and filter the wallets based on the user ID.
     }
 
-    // Add more tests for other methods of GestionWallet as needed.
+
 }

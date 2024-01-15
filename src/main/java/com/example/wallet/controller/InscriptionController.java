@@ -44,7 +44,7 @@ public class InscriptionController {
 
     public void onInscriptionButtonClick(ActionEvent actionEvent) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("connexion-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 1024, 768); // standard de base
+        Scene scene = new Scene(fxmlLoader.load(), 1024, 768);
         descriptionLabel.setText("Inscription réussit !");
         GestionUser gestion = new GestionUser();
         if(isValidEmail(mailField.getText())){

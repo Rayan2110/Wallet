@@ -45,7 +45,7 @@ public class ApiCaller {
     }
 
     public News getLatestNews() {
-        String url = "https://min-api.cryptocompare.com/data/v2/news/?lang=EN"; // Replace with the actual URL for news
+        String url = "https://min-api.cryptocompare.com/data/v2/news/?lang=EN";
         String jsonResponse = makeApiCall(url);
         Type listType = new TypeToken<News>() {
         }.getType();
@@ -54,20 +54,20 @@ public class ApiCaller {
 
     public String makeApiCall(String apiUrl) {
         try {
-            // Créer l'URL de l'API
+            // Crée l'URL de l'API
             URL url = new URL(apiUrl);
 
-            // Ouvrir la connexion HTTP
+            // Ouvre la connexion HTTP
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
-            // Définir la méthode de requête (GET dans cet exemple)
+            // Défini la méthode de requête (GET dans cet exemple)
             connection.setRequestMethod("GET");
 
-            // Obtenir la réponse de l'API
+            // Obtention de la réponse de l'API
             int responseCode = connection.getResponseCode();
 
             if (responseCode == HttpURLConnection.HTTP_OK) {
-                // Lire la réponse de l'API
+                // Lecture de la réponse de l'API
                 BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                 StringBuilder response = new StringBuilder();
                 String line;
@@ -77,15 +77,15 @@ public class ApiCaller {
                 }
                 reader.close();
 
-                // Retourner la réponse JSON
+                // Retourne la réponse JSON
                 return response.toString();
             } else {
-                // Gérer les erreurs de l'API
+                // Gére les erreurs de l'API
                 System.out.println("Erreur lors de la requête. Code de réponse : " + responseCode);
                 return null;
             }
         } catch (IOException e) {
-            // Gérer les exceptions d'entrée/sortie
+            // Gére les exceptions d'entrée/sortie
             e.printStackTrace();
             return null;
         }

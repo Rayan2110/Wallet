@@ -11,7 +11,7 @@ import java.util.List;
 
 public class GestionUser {
     private static GestionUser instance;
-    private String cheminFichier = "src/main/resources/bdd/users.txt"; // Remplacez par le chemin de votre fichier
+    private String cheminFichier = "src/main/resources/bdd/users.txt";
     private User currentUser;
 
     public static GestionUser getInstance() {

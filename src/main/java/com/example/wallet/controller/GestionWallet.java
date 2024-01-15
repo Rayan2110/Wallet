@@ -15,7 +15,7 @@ import java.util.List;
 import static com.example.wallet.controller.TransactionType.CLONE_WALLET;
 
 public class GestionWallet {
-    private String cheminFichier = "src/main/resources/bdd/wallets.txt"; // Remplacez par le chemin de votre fichier
+    private String cheminFichier = "src/main/resources/bdd/wallets.txt";
     private Wallet currentWallet;
 
     public void newWallet(Wallet wallet, long idUser) {
