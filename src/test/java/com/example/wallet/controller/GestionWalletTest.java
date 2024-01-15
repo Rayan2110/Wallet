@@ -3,6 +3,8 @@ package com.example.wallet.controller;
 import com.example.wallet.entity.Wallet;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.math.BigDecimal;
 import java.util.List;
 import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.*;
@@ -17,7 +19,7 @@ public class GestionWalletTest {
 
     @Test
     public void testNewWallet() {
-        Wallet wallet = new Wallet(1, "Wallet 1", "Description 1", 100.0f, LocalDateTime.now(), "USD");
+        Wallet wallet = new Wallet(1, "Wallet 1", "Description 1", BigDecimal.valueOf(100.0), LocalDateTime.now(), "USD");
         long userId = 1; // Replace with a valid user ID
         gestionWallet.newWallet(wallet, userId);
 
