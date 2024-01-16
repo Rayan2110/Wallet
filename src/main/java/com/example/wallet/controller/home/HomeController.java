@@ -473,8 +473,8 @@ public class HomeController implements Initializable {
 
     private Optional<Pair<String, String>> afficherDialogueClonage() {
         Dialog<Pair<String, String>> dialog = new Dialog<>();
-        dialog.setTitle("Cloner le Portefeuille");
-        dialog.setHeaderText("Entrez le titre et la description du nouveau portefeuille");
+        dialog.setTitle("Cloning the Portfolio");
+        dialog.setHeaderText("Enter the title and description of the new portfolio");
 
         // Boutons
         ButtonType btnCloner = new ButtonType("Cloner", ButtonBar.ButtonData.OK_DONE);
