@@ -1,6 +1,8 @@
 package com.example.wallet.controller.home;
 
 import com.example.wallet.ApiCaller;
+import com.example.wallet.controller.GestionTransaction;
+import com.example.wallet.controller.TransactionType;
 import com.example.wallet.entity.Transaction;
 import com.example.wallet.entity.Wallet;
 import javafx.collections.FXCollections;
@@ -18,16 +20,20 @@ import javafx.stage.Stage;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class SellingTokenPopup {
 
     private ObservableList<Transaction> transactionData;
-    private Object currentIdUser;
+    private GridPane grid;
+    private long currentIdUser;
     private BigDecimal moneyLeft;
     private float result;
     private Stage stage;
     private Wallet currentWallet;
+
+    private Label labelEstimationSelling = new Label();
 
     public SellingTokenPopup(Wallet currentWallet, BigDecimal moneyLeft, long currentIdUser, ObservableList<Transaction> transactionData) {
         this.currentWallet = currentWallet;
@@ -55,7 +61,7 @@ public class SellingTokenPopup {
         Label labelCurrentValueToken = new Label();
         Label labelAccountToken = new Label();
         Label labelnbSellingToken = new Label();
-        Button submitButton = new Button("Submit");
+        Button calculButton = new Button("Calcul");
         AtomicReference<TextField> numberField = new AtomicReference<>();
         // Initialiser numberField avec un nouveau TextField
         numberField.set(new TextField());
@@ -82,14 +88,14 @@ public class SellingTokenPopup {
                         }
                     });
 
-                    submitButton.setOnAction(e -> handleSellingSubmit(numberField,purchase_token,currentValueToken));
+                    calculButton.setOnAction(e -> handleSellingCalcul(numberField, purchase_token, currentValueToken));
 
                 }
             }
         });
 
         // Ajout des ComboBox au GridPane
-        GridPane grid = new GridPane();
+        grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(20, 150, 10, 10));
@@ -101,23 +107,29 @@ public class SellingTokenPopup {
         grid.add(labelAccountToken, 0, 2);
         grid.add(labelnbSellingToken, 0, 3);
         grid.add(numberField.get(), 1, 3);
-        grid.add(submitButton, 0, 4);
+        grid.add(calculButton, 0, 4);
 
         Scene scene = new Scene(grid, 512, 384);
         stage.setScene(scene);
 
     }
 
-    private void handleSellingSubmit(AtomicReference<TextField> nbToken, BigDecimal purchase_token, AtomicReference<BigDecimal> currentValueToken) {
+    private void handleSellingCalcul(AtomicReference<TextField> nbToken, BigDecimal purchase_token, AtomicReference<BigDecimal> currentValueToken) {
         BigDecimal nbTokensPrice = BigDecimal.valueOf(Double.parseDouble(nbToken.get().getText()));
-        if (nbTokensPrice.compareTo(purchase_token)<=0) {
-// Calculer la valeur actuelle de votre investissement
-            BigDecimal quantityOfCrypto = nbTokensPrice.divide(currentValueToken.get(),2, RoundingMode.HALF_UP);
+        labelEstimationSelling.setText("");
+        if (nbTokensPrice.compareTo(purchase_token) <= 0) {
+            // Calculer la valeur actuelle de votre investissement
+            BigDecimal quantityOfCrypto = nbTokensPrice.divide(currentValueToken.get(), 2, RoundingMode.HALF_UP);
             BigDecimal currentValue = quantityOfCrypto.multiply(currentValueToken.get());
+            currentValue = currentValue.setScale(2, RoundingMode.HALF_UP);
 
+            System.out.println(nbTokensPrice);
+            System.out.println(quantityOfCrypto);
+            System.out.println(currentValue);
+            labelEstimationSelling.setText("Estimated sales price : " + currentValue);
+            grid.add(labelEstimationSelling, 0, 5);
             // Comparer la valeur actuelle avec l'investissement initial
             int comparisonResult = currentValue.compareTo(nbTokensPrice);
-
             // Déterminer si vous êtes rentable
             if (comparisonResult > 0) {
                 System.out.println("Rentable : Votre investissement a augmenté.");
@@ -126,7 +138,22 @@ public class SellingTokenPopup {
             } else {
                 System.out.println("Équilibré : Votre investissement est égal à l'investissement initial.");
             }
+            Button sellButton = new Button("Confirm");
+            BigDecimal finalCurrentValue = currentValue;
+            sellButton.setOnAction(e -> handleSellingTransaction(finalCurrentValue, quantityOfCrypto));
+            grid.add(sellButton, 0, 6);
+        } else {
+            System.out.println("Impossible");
         }
+    }
+
+    private void handleSellingTransaction(BigDecimal currentValue, BigDecimal quantityOfCrypto) {
+        Transaction transaction = new Transaction(TransactionType.SALE_TOKEN.name(), currentValue, currentWallet.getCurrency(), LocalDateTime.now(), quantityOfCrypto, null, null);
+        GestionTransaction gestionTransaction = new GestionTransaction();
+        gestionTransaction.writeTransaction(transaction, currentWallet.getId(), currentIdUser);
+        currentWallet.getTransactions().add(transaction);
+        transactionData.add(transaction);
+        stage.close();
     }
 
 
