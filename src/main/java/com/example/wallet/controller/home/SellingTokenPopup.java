@@ -39,7 +39,6 @@ public class SellingTokenPopup {
         this.currentWallet = currentWallet;
         this.moneyLeft = moneyLeft;
         this.currentIdUser = currentIdUser;
-        this.transactionData = transactionData;
         stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
 
@@ -117,9 +116,9 @@ public class SellingTokenPopup {
     private void handleSellingCalcul(AtomicReference<TextField> nbToken, BigDecimal purchase_token, AtomicReference<BigDecimal> currentValueToken) {
         BigDecimal nbTokensPrice = BigDecimal.valueOf(Double.parseDouble(nbToken.get().getText()));
         labelEstimationSelling.setText("");
-        if (nbTokensPrice.compareTo(purchase_token) <= 0) {
+        if (nbTokensPrice.compareTo(purchase_token)<=0) {
             // Calculer la valeur actuelle de votre investissement
-            BigDecimal quantityOfCrypto = nbTokensPrice.divide(currentValueToken.get(), 2, RoundingMode.HALF_UP);
+            BigDecimal quantityOfCrypto = nbTokensPrice.divide(currentValueToken.get(),2, RoundingMode.HALF_UP);
             BigDecimal currentValue = quantityOfCrypto.multiply(currentValueToken.get());
             currentValue = currentValue.setScale(2, RoundingMode.HALF_UP);
 
@@ -132,11 +131,11 @@ public class SellingTokenPopup {
             int comparisonResult = currentValue.compareTo(nbTokensPrice);
             // Déterminer si vous êtes rentable
             if (comparisonResult > 0) {
-                System.out.println("Rentable : Votre investissement a augmenté.");
+                System.out.println("Profitable: Your investment has increased.");
             } else if (comparisonResult < 0) {
-                System.out.println("Non rentable : Votre investissement a diminué.");
+                System.out.println("Unprofitable: Your investment has decreased.");
             } else {
-                System.out.println("Équilibré : Votre investissement est égal à l'investissement initial.");
+                System.out.println("Balanced: Your investment is equal to your initial investment.");
             }
             Button sellButton = new Button("Confirm");
             BigDecimal finalCurrentValue = currentValue;

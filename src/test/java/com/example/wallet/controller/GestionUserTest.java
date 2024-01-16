@@ -23,8 +23,6 @@ public class GestionUserTest {
 
         gestionUser.inscrireUtilisateur(email, motDePasse, name, firstName, birthday);
 
-        // You can add assertions to check if the user was added successfully to the file.
-        // You may need to read the file and verify its contents.
     }
 
     @Test
@@ -34,12 +32,9 @@ public class GestionUserTest {
 
         boolean result = gestionUser.verifierIdentifiants(email, motDePasse);
 
-        // You can add assertions to check if the verification of credentials works as expected.
-        // You may need to mock the file data or provide a test-specific data file.
-        assertTrue(result); // Assuming the provided credentials are valid for the test data.
+        assertTrue(result);
     }
 
-    // Add more tests for other methods of GestionUser as needed.
 
     @Test
     public void testGetCurrentUser() {

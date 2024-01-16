@@ -29,20 +29,20 @@ public class NewsDisplay {
                 showArticlePopup(article);
             }
         });
-        newsListView.refresh(); // Rafraîchir la ListView après avoir défini les éléments
+        newsListView.refresh(); // Rafraichit la ListView après avoir défini les éléments
 
         newsListView.setCellFactory(param -> new ListCell<Articles>() {
             private ImageView imageView = new ImageView();
             private VBox vbox = new VBox();
             private Text titleLabel = new Text();
             private Text contentLabel = new Text();
-            private HBox hBox = new HBox(10); // 10px spacing between elements
+            private HBox hBox = new HBox(10);
 
             {
                 vbox.getChildren().addAll(titleLabel, contentLabel);
                 hBox.getChildren().addAll(imageView, vbox);
                 hBox.setPadding(new Insets(10, 5, 10, 5));
-                contentLabel.setWrappingWidth(250); // Adjust as necessary
+                contentLabel.setWrappingWidth(250);
             }
 
             @Override
@@ -56,10 +56,10 @@ public class NewsDisplay {
                     contentLabel.setText(item.getBody());
 
                     if (item.getImageurl() != null && !item.getImageurl().isEmpty()) {
-                        Image image = new Image(item.getImageurl(), true); // true to load in background
+                        Image image = new Image(item.getImageurl(), true);
                         imageView.setImage(image);
                         imageView.setPreserveRatio(true);
-                        imageView.setFitHeight(50); // Adjust as necessary
+                        imageView.setFitHeight(50);
                     }
 
                     setGraphic(hBox);
@@ -81,14 +81,14 @@ public class NewsDisplay {
 
         ImageView imageView = new ImageView();
         if (article.getImageurl() != null && !article.getImageurl().isEmpty()) {
-            Image image = new Image(article.getImageurl(), true); // true to load in background
+            Image image = new Image(article.getImageurl(), true);
             imageView.setImage(image);
             imageView.setPreserveRatio(true);
-            imageView.setFitHeight(200); // Adjust as necessary
+            imageView.setFitHeight(200);
         }
 
         Text contentText = new Text(article.getBody());
-        contentText.setWrappingWidth(300); // Adjust as necessary
+        contentText.setWrappingWidth(300);
 
         grid.add(imageView, 0, 0);
         grid.add(contentText, 0, 1);

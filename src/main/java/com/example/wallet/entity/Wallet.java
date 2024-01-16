@@ -19,8 +19,6 @@ public class Wallet {
 
     private LocalDateTime creationDate;
 
-    private History history;
-
     private String currency;
 
     public long getId() {
@@ -69,14 +67,6 @@ public class Wallet {
 
     public void setCreationDate(LocalDateTime creationDate) {
         this.creationDate = creationDate;
-    }
-
-    public History getHistory() {
-        return history;
-    }
-
-    public void setHistory(History history) {
-        this.history = history;
     }
 
     public String getCurrency() {

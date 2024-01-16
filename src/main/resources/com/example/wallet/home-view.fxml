@@ -13,8 +13,10 @@
             <MenuBar>
                 <menus>
                     <Menu fx:id="walletsItems" mnemonicParsing="false" text="Vos Wallets">
+                    </Menu>
+                    <Menu text="Options">
                         <items>
-
+                            <MenuItem fx:id="disconnectButton" mnemonicParsing="false" onAction="#onHandleDisconnectButton" text="Disconnect" />
                         </items>
                     </Menu>
                 </menus>
@@ -55,7 +57,6 @@
                 <Button fx:id="addWallet" onAction="#onAddMoneyButtonClick" style="-fx-background-color: yellow;" text="New Wallet" />
                 <Button fx:id="switchCurrencyWallet" onAction="#onHandleSwitchCurrency" style="-fx-background-color: orange;" text="Change Currency" />
                 <Button fx:id="cloneButton" onAction="#onHandleCloneButton" style="-fx-background-color: #800080;" text="Clone" />
-            <Button fx:id="DisconnectButton" mnemonicParsing="false" onAction="#onHandleDisconnectButton" style="-fx-background-color: #FF00FF;" text="Disconnect" />
             </HBox>
             <Label fx:id="moneyLeftLabel" text="moneyLeft" textFill="#484100">
                 <font>

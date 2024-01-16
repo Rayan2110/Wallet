@@ -2,6 +2,8 @@ module com.example.wallet {
     requires javafx.controls;
     requires javafx.fxml;
     requires com.google.gson;
+    requires javafx.graphics;
+    requires javafx.base;
 
     opens com.example.wallet.entity; // Ajoutez cette ligne
     opens com.example.wallet to javafx.fxml;
