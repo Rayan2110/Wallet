@@ -19,7 +19,7 @@
          </image>
       </ImageView>
       <PasswordField fx:id="passwordField" layoutX="415.0" layoutY="571.0" />
-      <Label layoutX="612.0" layoutY="488.0" prefHeight="47.0" prefWidth="82.0" text="Identifiant">
+      <Label layoutX="612.0" layoutY="488.0" prefHeight="47.0" prefWidth="82.0" text="E-mail">
          <font>
             <Font name="System Bold" size="14.0" />
          </font>
