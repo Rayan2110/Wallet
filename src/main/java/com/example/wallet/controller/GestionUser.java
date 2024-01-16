@@ -61,7 +61,7 @@ public class GestionUser {
                     GestionWallet gestionWallet = new GestionWallet();
                     List<Wallet> wallets = gestionWallet.checkMyWallets(Long.parseLong(parts[0]));
                     if (wallets != null && wallets.size() > 0) {
-                        System.out.println("tu as plusieurs wallets");
+                        System.out.println("you have multiple wallets");
                         user.setWallets(wallets);
                     }
                     GestionUser.getInstance().setCurrentUser(user);

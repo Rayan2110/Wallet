@@ -15,7 +15,7 @@ public enum TransactionType {
     }
 
     public String getDisplayName() {
-        return displayName;
+        return displayName; // affichage de la clé "CLONE_WALLET" et pas de la valeur "Clone" par exemple
     }
 
     @Override

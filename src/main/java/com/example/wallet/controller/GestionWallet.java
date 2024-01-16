@@ -16,7 +16,7 @@ import static com.example.wallet.controller.TransactionType.CLONE_WALLET;
 
 public class GestionWallet {
     private String cheminFichier = "src/main/resources/bdd/wallets.txt";
-    private Wallet currentWallet;
+
 
     public void newWallet(Wallet wallet, long idUser) {
         try (FileWriter writer = new FileWriter(cheminFichier, true)) {
@@ -26,22 +26,6 @@ public class GestionWallet {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public void cloneWallet(Wallet currentWallet, long idUser) {
-        Wallet cloneWallet = currentWallet;
-        cloneWallet.setId(cloneWallet.getId() + 1);
-        cloneWallet.setTitle(currentWallet.getTitle() + " clone");
-        cloneWallet.setDescription(currentWallet.getTitle() + " clone");
-        cloneWallet.getTransactions().clear();
-
-        for (Transaction transaction : currentWallet.getTransactions()) {
-            Transaction transactionClone = transaction;
-            GestionTransaction gestionTransaction = new GestionTransaction();
-            gestionTransaction.writeTransaction(transactionClone, cloneWallet.getId(), idUser);
-            cloneWallet.getTransactions().add(transactionClone);
-        }
-
     }
 
     private int nbWallet() {

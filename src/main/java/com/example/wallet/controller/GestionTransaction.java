@@ -26,14 +26,6 @@ public class GestionTransaction {
         }
     }
 
-    public void displayTransactions(TransactionType transactionType, BigDecimal price, BigDecimal amount, String token, String idToken, Wallet currentWallet, long idUser, ObservableList<Transaction> transactionData) {
-        Transaction transaction = new Transaction(TransactionType.PURCHASE_TOKEN.name(), price, currentWallet.getCurrency().toUpperCase(), LocalDateTime.now(), amount, token, idToken);
-        GestionTransaction gestionTransaction = new GestionTransaction();
-        gestionTransaction.writeTransaction(transaction, currentWallet.getId(), idUser);
-        currentWallet.getTransactions().add(transaction);
-        transactionData.add(transaction);
-    }
-
     private long nbTransaction() {
         long lineCount = 0;
         try (BufferedReader reader = new BufferedReader(new FileReader(cheminFichier))) {

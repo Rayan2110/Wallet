@@ -5,3 +5,4 @@ IdWallet|Title|Description|Money|DateOfCreation|Currency|IdUser
 4|test#2|dkodeokefkoe|555555.0|2024-01-14T16:26:47.162651300|EUR|2
 5|Wazazaza|defe|555555.0|2024-01-14T16:33:24.222607200|EUR|2
 6|Wallet 1|Description 1|100.0|2024-01-15T13:51:40.099897|USD|1
+7|w789|arrara|222555.0|2024-01-15T14:45:39.361444100|EUR|2

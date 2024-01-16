@@ -45,13 +45,13 @@ public class InscriptionController {
     public void onInscriptionButtonClick(ActionEvent actionEvent) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("connexion-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 1024, 768);
-        descriptionLabel.setText("Inscription réussit !");
+        descriptionLabel.setText("Successful registration !");
         GestionUser gestion = new GestionUser();
         if(isValidEmail(mailField.getText())){
             gestion.inscrireUtilisateur(mailField.getText(),passwordField.getText(), nameField.getText(),firstNameField.getText(), birthdayField.getText());
         }
         else {
-            descriptionLabel.setText("Veuillez recommencer ! Le format de votre adresse e-mail est incorrect.");
+            descriptionLabel.setText("Please try again! The format of your e-mail address is incorrect.");
         }
     }
 

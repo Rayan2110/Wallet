@@ -39,7 +39,7 @@ public class ConnexionController {
         gestion = new GestionUser();
         boolean connexionReussie = gestion.verifierIdentifiants(idField.getText(), passwordField.getText());
         if (connexionReussie) {
-            System.out.println("Connexion réussie !");
+            System.out.println("Successful connection!");
             gestionTransaction = new GestionTransaction();
             gestionTransaction.getAllTransactions(GestionUser.getInstance().getCurrentUser());
             FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("home-view.fxml"));
@@ -47,7 +47,7 @@ public class ConnexionController {
             stage.setScene(scene);
             stage.show();
         } else {
-            error_label.setText("Erreur! Veuillez Recommencez.");
+            error_label.setText("Error! Please try again.");
         }
     }
 

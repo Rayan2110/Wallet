@@ -67,11 +67,11 @@ public class SavingMoneyPopup {
                 stage.close();
             } else {
                 numberField.setText("");
-                numberField.setPromptText("Montant invalide : dépasse le solde du portefeuille");
+                numberField.setPromptText("Invalid amount: exceeds portfolio balance");
             }
         } catch (NumberFormatException e) {
             numberField.setText("");
-            numberField.setPromptText("Veuillez entrer un nombre valide");
+            numberField.setPromptText("Please enter a valid number");
         }
     }
 
