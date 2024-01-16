@@ -17,8 +17,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.*;
 import javafx.scene.control.*;
@@ -40,7 +38,6 @@ import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -411,7 +408,11 @@ public class HomeController implements Initializable {
     // Méthode pour appeler l'API et récupérer les données
     private List<CryptoCurrency> fetchDataFromApi() {
         ApiCaller apiCaller = new ApiCaller();
-        return apiCaller.getAllCoinsMarket(currentWallet.getCurrency(), 10, "market_cap_desc", 1, true, "7d", "fr");
+        if (currentWallet != null) {
+            return apiCaller.getAllCoinsMarket(currentWallet.getCurrency(), 10, "market_cap_desc", 1, true, "7d", "fr");
+        } else {
+            return apiCaller.getAllCoinsMarket("USD", 10, "market_cap_desc", 1, true, "7d", "fr");
+        }
     }
 
     private News fetchNewsFromApi() {
@@ -531,6 +532,7 @@ public class HomeController implements Initializable {
         }
         moneyLeftLabel.setText("Money Left : " + moneyLeft);
     }
+
     @FXML
     public void onHandleDisconnectButton(ActionEvent actionEvent) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
