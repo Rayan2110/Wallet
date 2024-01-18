@@ -1,4 +1,4 @@
-package com.example.wallet.controller;
+package com.example.wallet.services;
 
 import com.example.wallet.entity.Transaction;
 import com.example.wallet.entity.Wallet;

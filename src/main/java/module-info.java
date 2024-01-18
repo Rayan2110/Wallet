@@ -13,5 +13,11 @@ module com.example.wallet {
     opens com.example.wallet.controller to javafx.fxml;
     exports com.example.wallet.controller.home;
     opens com.example.wallet.controller.home to javafx.fxml;
+    exports com.example.wallet.services;
+    opens com.example.wallet.services to javafx.fxml;
+    exports com.example.wallet.api;
+    opens com.example.wallet.api to javafx.fxml;
+    exports com.example.wallet.controller.home.popup;
+    opens com.example.wallet.controller.home.popup to javafx.fxml;
 
 }

@@ -1,6 +1,6 @@
-package com.example.wallet.controller.home;
+package com.example.wallet.controller.home.popup;
 
-import com.example.wallet.controller.GestionTransaction;
+import com.example.wallet.services.GestionTransaction;
 import com.example.wallet.controller.TransactionType;
 import com.example.wallet.entity.CryptoCurrency;
 import com.example.wallet.entity.Transaction;

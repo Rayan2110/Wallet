@@ -1,4 +1,4 @@
-package com.example.wallet.controller;
+package com.example.wallet.services;
 
 import com.example.wallet.entity.User;
 import com.example.wallet.entity.Wallet;
@@ -9,7 +9,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
-public class GestionUser {
+public class GestionUser { // Singleton
     private static GestionUser instance;
     private String cheminFichier = "src/main/resources/bdd/users.txt";
     private User currentUser;

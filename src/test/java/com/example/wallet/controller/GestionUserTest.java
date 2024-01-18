@@ -1,6 +1,7 @@
 package com.example.wallet.controller;
 
 import com.example.wallet.entity.User;
+import com.example.wallet.services.GestionUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;

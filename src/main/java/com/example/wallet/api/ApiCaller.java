@@ -1,7 +1,6 @@
-package com.example.wallet;
+package com.example.wallet.api;
 
 import com.example.wallet.entity.CryptoCurrency;
-import com.example.wallet.entity.Articles;
 import com.example.wallet.entity.News;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -17,7 +16,8 @@ import java.net.URL;
 import java.util.List;
 
 public class ApiCaller {
-    private static final String BASE_URL = "https://api.coingecko.com/api/v3";
+    private static final String BASE_URL_COINGECKO = "https://api.coingecko.com/api/v3";
+    private static final String BASE_URL_NEWS = "https://min-api.cryptocompare.com/data/v2/news/?lang=EN";
 
     private final Gson gson;
 
@@ -26,7 +26,7 @@ public class ApiCaller {
     }
 
     public List<CryptoCurrency> getAllCoinsMarket(String currency, int limit, String order, int page, boolean sparkline, String priceChangePercentage, String locale) {
-        String url = BASE_URL + "/coins/markets?vs_currency=" + currency + "&order=" + order + "&per_page=" + limit + "&page=" + page + "&sparkline=" + sparkline
+        String url = BASE_URL_COINGECKO + "/coins/markets?vs_currency=" + currency + "&order=" + order + "&per_page=" + limit + "&page=" + page + "&sparkline=" + sparkline
                 + "&price_change_percentage=" + priceChangePercentage + "&locale=" + locale;
         String jsonResponse = makeApiCall(url);
         Type listType = new TypeToken<List<CryptoCurrency>>() {
@@ -35,7 +35,7 @@ public class ApiCaller {
     }
 
     public BigDecimal getPriceOfAnyToken(String idToken, String currency) {
-        String url = BASE_URL + "/simple/price?ids=" + idToken + "&vs_currencies=" + currency;
+        String url = BASE_URL_COINGECKO + "/simple/price?ids=" + idToken + "&vs_currencies=" + currency;
         String jsonResponse = makeApiCall(url);
         Gson gson = new Gson();
         JsonObject jsonObject = gson.fromJson(jsonResponse, JsonObject.class);
@@ -45,7 +45,7 @@ public class ApiCaller {
     }
 
     public News getLatestNews() {
-        String url = "https://min-api.cryptocompare.com/data/v2/news/?lang=EN";
+        String url = BASE_URL_NEWS;
         String jsonResponse = makeApiCall(url);
         Type listType = new TypeToken<News>() {
         }.getType();

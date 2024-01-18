@@ -1,12 +1,15 @@
 package com.example.wallet.controller.home;
 
-import com.example.wallet.ApiCaller;
 import com.example.wallet.HelloApplication;
-import com.example.wallet.controller.GestionTransaction;
-import com.example.wallet.controller.GestionUser;
-import com.example.wallet.controller.GestionWallet;
+import com.example.wallet.api.ApiCaller;
 import com.example.wallet.controller.TransactionType;
+import com.example.wallet.controller.home.popup.PurchaseTokenPopup;
+import com.example.wallet.controller.home.popup.SavingMoneyPopup;
+import com.example.wallet.controller.home.popup.SellingTokenPopup;
 import com.example.wallet.entity.*;
+import com.example.wallet.services.GestionTransaction;
+import com.example.wallet.services.GestionUser;
+import com.example.wallet.services.GestionWallet;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -36,10 +39,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URL;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import static com.example.wallet.HelloApplication.stage;
 
@@ -113,6 +113,8 @@ public class HomeController implements Initializable {
     private Wallet currentWallet;
 
     private BigDecimal moneyLeft;
+
+    private Map<String, BigDecimal> mapSalingToken = new HashMap<>();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -234,44 +236,73 @@ public class HomeController implements Initializable {
 
     private void updateHeader() {
         if (currentWallet != null) {
-            PieChart.Data emptyData = new PieChart.Data("", 0.001);
+            // Initialisation du PieChart et des variables
+            mapSalingToken.clear();
             pieChart.getData().clear();
-            pieChart.getData().add(emptyData);
-
+            Map<String, BigDecimal> tokenBalances = new HashMap<>();
             BigDecimal totalMoney = BigDecimal.ZERO;
-            BigDecimal totalTransaction = BigDecimal.ZERO;
+            BigDecimal totalAchats = BigDecimal.ZERO;
+            BigDecimal totalVentes = BigDecimal.ZERO;
 
+            // Traitement des transactions pour ajuster les soldes des tokens
             for (Transaction transaction : currentWallet.getTransactions()) {
-                if (Arrays.asList("CREATE_WALLET", "CLONE_WALLET", "DEPOSIT_MONEY").contains(transaction.getTransactionType())) {
-                    totalMoney = totalMoney.add(transaction.getPrice());
-                }
-            }
-            for (Transaction transaction : currentWallet.getTransactions()) {
-                if (Arrays.asList("PURCHASE_TOKEN", "SAVING_MONEY").contains(transaction.getTransactionType())) {
-                    String title = transaction.getToken();
-                    BigDecimal pricePercentage = transaction.getPrice().multiply(BigDecimal.valueOf(100)).divide(totalMoney, 2, RoundingMode.HALF_UP);
+                String token = transaction.getIdToken();
+                BigDecimal price = transaction.getPrice();
+                BigDecimal amount = transaction.getAmount();
 
-                    PieChart.Data segment = new PieChart.Data(transaction.getToken(), pricePercentage.doubleValue());
-                    totalTransaction = totalTransaction.add(transaction.getPrice());
-                    pieChart.getData().add(segment);
-                    if ("SAVING_MONEY".equals(transaction.getTransactionType())) {
-                        addTooltipToChartData(segment, title, "Saving : " + transaction.getPrice());
-                    } else {
-                        addTooltipToChartData(segment, title, transaction.getToken() + " : " + transaction.getPrice());
+                switch (transaction.getTransactionType()) {
+                    case "PURCHASE_TOKEN" -> {
+                        totalAchats = totalAchats.add(price);
+                        tokenBalances.put(token, tokenBalances.getOrDefault(token, BigDecimal.ZERO).add(price));
+                    }
+                    case "SALE_TOKEN" -> {
+                        totalVentes = totalVentes.add(price);
+                        tokenBalances.put(token, tokenBalances.getOrDefault(token, BigDecimal.ZERO).subtract(price));
+                    }
+                    case "DEPOSIT_MONEY", "CREATE_WALLET", "CLONE_WALLET" -> totalMoney = totalMoney.add(price);
+                    case "SAVING_MONEY" -> {
+                        if (tokenBalances.containsKey("saving")) {
+                            BigDecimal savingMoney = tokenBalances.get("saving");
+                            tokenBalances.put("saving", tokenBalances.getOrDefault(token, BigDecimal.ZERO).add(price.add(savingMoney)));
+                        } else {
+                            tokenBalances.put("saving", tokenBalances.getOrDefault(token, BigDecimal.ZERO).add(price));
+                        }
+                        totalAchats = totalAchats.add(price);
+                    }
+                    default -> {
                     }
                 }
             }
+            // Calcul du total des transactions et de l'argent restant
+            BigDecimal totalTransactions = totalAchats.subtract(totalVentes);
+            moneyLeft = totalMoney.subtract(totalTransactions);
+
+            // Mise à jour des éléments de l'interface utilisateur
             moneyWallet.setText(totalMoney + " " + currentWallet.getCurrency());
-            moneyLeft = totalMoney.subtract(totalTransaction);
+
+            // Création des segments du PieChart
+            for (Map.Entry<String, BigDecimal> entry : tokenBalances.entrySet()) {
+                String token = entry.getKey();
+                BigDecimal balance = entry.getValue();
+                if (balance.compareTo(BigDecimal.ZERO) > 0) {
+                    BigDecimal pricePercentage = balance.multiply(BigDecimal.valueOf(100)).divide(totalMoney, 2, RoundingMode.HALF_UP);
+                    PieChart.Data segment = new PieChart.Data(token + ": " + balance, pricePercentage.doubleValue());
+                    pieChart.getData().add(segment);
+                    mapSalingToken.put(token, balance);
+                    addTooltipToChartData(segment, token, token + " : " + balance);
+                }
+            }
+
+            // Ajout du segment pour l'argent restant
             BigDecimal moneyLeftPercentage = moneyLeft.multiply(BigDecimal.valueOf(100)).divide(totalMoney, 2, RoundingMode.HALF_UP);
-            PieChart.Data segment = new PieChart.Data("Money still available : ", moneyLeftPercentage.doubleValue());
-            pieChart.getData().add(segment);
-            addTooltipToChartData(segment, String.valueOf(moneyLeftPercentage), "Money still available : " + moneyLeft);
+            PieChart.Data moneyLeftSegment = new PieChart.Data("Money Left: " + moneyLeft, moneyLeftPercentage.doubleValue());
+            pieChart.getData().add(moneyLeftSegment);
+            addTooltipToChartData(moneyLeftSegment, "Money Left", "Money Left: " + moneyLeft);
+
             pieChart.setLabelsVisible(false);
             moneyLeftLabel.setText("Money Left : " + moneyLeft);
         }
     }
-
 
     private void addTooltipToChartData(PieChart.Data data, String title, String tooltipText) {
         Tooltip tooltip = new Tooltip(tooltipText);
@@ -512,7 +543,7 @@ public class HomeController implements Initializable {
 
     @FXML
     public void onHandleSellButton(ActionEvent actionEvent) {
-        SellingTokenPopup popup = new SellingTokenPopup(currentWallet, moneyLeft, currentUser.getId(), transactionData);
+        SellingTokenPopup popup = new SellingTokenPopup(currentWallet, moneyLeft, currentUser.getId(), transactionData, mapSalingToken);
         float result = popup.showAndWait();
 
         updateHeader();

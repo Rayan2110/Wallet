@@ -1,4 +1,4 @@
-package com.example.wallet.controller;
+package com.example.wallet.services;
 
 import com.example.wallet.entity.Transaction;
 import com.example.wallet.entity.User;
@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 
 public class GestionTransaction {
 
-    private String cheminFichier = "src/main/resources/bdd/transactions.txt";
+    private final String cheminFichier = "src/main/resources/bdd/transactions.txt";
 
     public void writeTransaction(Transaction transaction, long idWallet, long idUser) {
         try (FileWriter writer = new FileWriter(cheminFichier, true)) {

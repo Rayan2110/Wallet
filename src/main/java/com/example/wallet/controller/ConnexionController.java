@@ -1,6 +1,8 @@
 package com.example.wallet.controller;
 
 import com.example.wallet.HelloApplication;
+import com.example.wallet.services.GestionTransaction;
+import com.example.wallet.services.GestionUser;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;

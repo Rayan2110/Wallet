@@ -3,3 +3,6 @@ Id|Mail|Password|Name|Username|BirthDate
 2|test@test.fr|test|test|test|15/01/1995
 3|test@example.com|password|John|Doe|1990/01/01
 4|titi@titi.fr|titi|titi|tutu|01/02/1995
+5|test@example.com|password|John|Doe|1990/01/01
+6|test@example.com|password|John|Doe|1990/01/01
+7|test@example.com|password|John|Doe|1990/01/01

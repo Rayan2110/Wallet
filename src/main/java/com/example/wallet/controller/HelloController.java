@@ -1,6 +1,7 @@
 package com.example.wallet.controller;
 
 import com.example.wallet.HelloApplication;
+import com.example.wallet.api.ApiCaller;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;

@@ -1,10 +1,10 @@
-package com.example.wallet.controller.home;
+package com.example.wallet.controller.home.popup;
 
-import com.example.wallet.ApiCaller;
-import com.example.wallet.controller.GestionTransaction;
+import com.example.wallet.api.ApiCaller;
 import com.example.wallet.controller.TransactionType;
 import com.example.wallet.entity.Transaction;
 import com.example.wallet.entity.Wallet;
+import com.example.wallet.services.GestionTransaction;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
@@ -21,6 +21,7 @@ import javafx.stage.Stage;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class SellingTokenPopup {
@@ -34,11 +35,14 @@ public class SellingTokenPopup {
     private Wallet currentWallet;
 
     private Label labelEstimationSelling = new Label();
+    private String currency;
+    private String tokens;
 
-    public SellingTokenPopup(Wallet currentWallet, BigDecimal moneyLeft, long currentIdUser, ObservableList<Transaction> transactionData) {
+    public SellingTokenPopup(Wallet currentWallet, BigDecimal moneyLeft, long currentIdUser, ObservableList<Transaction> transactionData, Map<String, BigDecimal> mapSalingToken) {
         this.currentWallet = currentWallet;
         this.moneyLeft = moneyLeft;
         this.currentIdUser = currentIdUser;
+        this.transactionData = transactionData;
         stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
 
@@ -67,6 +71,7 @@ public class SellingTokenPopup {
         comboCryptoMonnaie.valueProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null) {
                 String currency = tokenCurrencyMap.get(newVal);
+                tokens = newVal;
                 if (currency != null) {
                     currentValueToken.set(fetchCurrentTokenValue(newVal, currency));
                     labelCurrentValueToken.setText(currentValueToken.toString());
@@ -78,7 +83,7 @@ public class SellingTokenPopup {
                             .map(Transaction::getPrice)
                             // Somme des prix
                             .reduce(BigDecimal.ZERO, BigDecimal::add);
-                    labelAccountToken.setText("You have in your account " + purchase_token.toString());
+                    labelAccountToken.setText("You have in your account " + mapSalingToken.get(newVal));
                     labelnbSellingToken.setText("How much do you want to sell ? ");
                     // Permet seulement les entrées numériques
                     numberField.get().textProperty().addListener((observable, oldValue, newValue) -> {
@@ -87,7 +92,7 @@ public class SellingTokenPopup {
                         }
                     });
 
-                    calculButton.setOnAction(e -> handleSellingCalcul(numberField, purchase_token, currentValueToken));
+                    calculButton.setOnAction(e -> handleSellingCalcul(numberField, purchase_token, currentValueToken, tokens));
 
                 }
             }
@@ -113,12 +118,12 @@ public class SellingTokenPopup {
 
     }
 
-    private void handleSellingCalcul(AtomicReference<TextField> nbToken, BigDecimal purchase_token, AtomicReference<BigDecimal> currentValueToken) {
+    private void handleSellingCalcul(AtomicReference<TextField> nbToken, BigDecimal purchase_token, AtomicReference<BigDecimal> currentValueToken, String tokens) {
         BigDecimal nbTokensPrice = BigDecimal.valueOf(Double.parseDouble(nbToken.get().getText()));
         labelEstimationSelling.setText("");
-        if (nbTokensPrice.compareTo(purchase_token)<=0) {
+        if (nbTokensPrice.compareTo(purchase_token) <= 0) {
             // Calculer la valeur actuelle de votre investissement
-            BigDecimal quantityOfCrypto = nbTokensPrice.divide(currentValueToken.get(),2, RoundingMode.HALF_UP);
+            BigDecimal quantityOfCrypto = nbTokensPrice.divide(currentValueToken.get(), 2, RoundingMode.HALF_UP);
             BigDecimal currentValue = quantityOfCrypto.multiply(currentValueToken.get());
             currentValue = currentValue.setScale(2, RoundingMode.HALF_UP);
 
@@ -139,15 +144,15 @@ public class SellingTokenPopup {
             }
             Button sellButton = new Button("Confirm");
             BigDecimal finalCurrentValue = currentValue;
-            sellButton.setOnAction(e -> handleSellingTransaction(finalCurrentValue, quantityOfCrypto));
+            sellButton.setOnAction(e -> handleSellingTransaction(finalCurrentValue, quantityOfCrypto, tokens));
             grid.add(sellButton, 0, 6);
         } else {
             System.out.println("Impossible");
         }
     }
 
-    private void handleSellingTransaction(BigDecimal currentValue, BigDecimal quantityOfCrypto) {
-        Transaction transaction = new Transaction(TransactionType.SALE_TOKEN.name(), currentValue, currentWallet.getCurrency(), LocalDateTime.now(), quantityOfCrypto, null, null);
+    private void handleSellingTransaction(BigDecimal currentValue, BigDecimal quantityOfCrypto, String token) {
+        Transaction transaction = new Transaction(TransactionType.SALE_TOKEN.name(), currentValue, currentWallet.getCurrency(), LocalDateTime.now(), quantityOfCrypto, token, token);
         GestionTransaction gestionTransaction = new GestionTransaction();
         gestionTransaction.writeTransaction(transaction, currentWallet.getId(), currentIdUser);
         currentWallet.getTransactions().add(transaction);

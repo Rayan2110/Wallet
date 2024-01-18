@@ -1,13 +1,13 @@
 package com.example.wallet.controller;
 
 import com.example.wallet.entity.Wallet;
+import com.example.wallet.services.GestionWallet;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.time.LocalDateTime;
-import static org.junit.jupiter.api.Assertions.*;
 
 public class GestionWalletTest {
     private GestionWallet gestionWallet;

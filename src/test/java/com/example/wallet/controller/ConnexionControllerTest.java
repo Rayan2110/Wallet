@@ -1,5 +1,6 @@
 package com.example.wallet.controller;
 
+import com.example.wallet.services.GestionUser;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -38,6 +39,6 @@ public class ConnexionControllerTest {
         controller.onConnexionButtonClick(event);
 
         // Vérifie que le label d'erreur contient le message d'erreur attendu
-        assertEquals("Erreur! Veuillez Recommencez.", controller.error_label.getText());
+        assertEquals("Error! Please try again.", controller.error_label.getText());
     }
 }
