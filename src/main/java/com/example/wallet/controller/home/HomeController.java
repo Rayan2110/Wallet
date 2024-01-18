@@ -561,7 +561,9 @@ public class HomeController implements Initializable {
             moneyLeft = moneyLeft.divide(rate, 2, RoundingMode.HALF_UP);
             currentWallet.setCurrency("eur");
         }
-        moneyLeftLabel.setText("Money Left : " + moneyLeft);
+        //moneyLeftLabel.setText("Money Left : " + moneyLeft);
+        moneyLeftLabel.setText("Money Left : " + moneyLeft + " " + currentWallet.getCurrency());
+
     }
 
     @FXML
